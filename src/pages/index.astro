@@ -6,6 +6,8 @@ import PetalsCanvas from '../components/PetalsCanvas.astro';
 import CircularBadge from '../components/CircularBadge.astro';
 import Modal from '../components/Modal.astro';
 import SpotifyModal from '../components/SpotifyModal.astro';
+import DosOruguitasSection from '../components/DosOruguitasSection.astro';
+import HiloRojoSection from '../components/HiloRojoSection.astro';
 import Menuin from '../components/menuin.astro';
 
 // Safe base URL handling for GitHub Pages deployment
@@ -32,7 +34,7 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
     <title>Flores Amarillas Para Ti 🌻 | Mi Cielito</title>
     <meta
       name="description"
-      content="Una dedicatoria especial con flores amarillas, música en Spotify y nuestra galería de recuerdos juntos."
+      content="Una dedicatoria especial en 3 capítulos: Dos Oruguitas, El Hilo Rojo del Destino y Flores Amarillas con nuestra galería de recuerdos."
     />
 
     <!-- Google Fonts Preconnect for Ultra-Fast Loading -->
@@ -44,10 +46,13 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
     />
 
     <style>
-      /* CSS Performance Optimizations */
       .memory-card {
         content-visibility: auto;
         contain-intrinsic-size: 320px;
+      }
+      .chapter-section {
+        content-visibility: auto;
+        contain-intrinsic-size: 600px;
       }
     </style>
   </head>
@@ -55,48 +60,65 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
     <!-- Dynamic Lightweight Petals Background Canvas -->
     <PetalsCanvas />
 
-    <!-- Ambient Glowing Light Orbs (Optimized with lower blur radius) -->
+    <!-- Ambient Glowing Background Light Orbs -->
     <div class="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-900/15 rounded-full blur-[100px] pointer-events-none"></div>
     <div class="fixed bottom-10 left-10 w-[350px] h-[350px] bg-amber-500/10 rounded-full blur-[90px] pointer-events-none"></div>
 
     <!-- ============================================== -->
-    <!-- STICKY TOP NAVBAR (Includes explicit Inicio button) -->
+    <!-- STICKY TOP NAVBAR (3 Temáticas + Spotify + Inicio) -->
     <!-- ============================================== -->
-    <header class="fixed top-0 left-0 right-0 z-40 px-4 py-3 bg-[#0c0915]/80 backdrop-blur-md border-b border-amber-400/15 transition-all duration-300">
+    <header class="fixed top-0 left-0 right-0 z-40 px-3 sm:px-6 py-2.5 bg-[#0c0915]/85 backdrop-blur-md border-b border-amber-400/15 transition-all duration-300">
       <div class="max-w-6xl mx-auto flex items-center justify-between">
         <!-- Logo / Brand -->
-        <a href="#heroCardSection" class="flex items-center gap-2 group cursor-pointer">
-          <span class="text-xl group-hover:scale-110 transition-transform">🌻</span>
-          <span class="font-serif text-amber-100 font-medium tracking-wide text-sm sm:text-base">Mi Cielito</span>
+        <a href="#heroCardSection" class="flex items-center gap-2 group cursor-pointer flex-shrink-0">
+          <span class="text-lg sm:text-xl group-hover:scale-110 transition-transform">🌻</span>
+          <span class="font-serif text-amber-100 font-medium tracking-wide text-xs sm:text-base hidden sm:inline">Mi Cielito</span>
         </a>
 
-        <!-- Navigation Links -->
-        <nav class="flex items-center gap-2 sm:gap-4">
-          <!-- Botón de Inicio explícito y visible -->
+        <!-- Navigation Links (Capítulos temáticos) -->
+        <nav class="flex items-center gap-1.5 sm:gap-3 overflow-x-auto no-scrollbar py-1">
+          <!-- Botón de Inicio / Portada -->
           <a
-            id="navInicioBtn"
             href="#heroCardSection"
-            class="px-3.5 py-1.5 rounded-full bg-amber-500/15 hover:bg-amber-500/30 text-amber-200 text-xs sm:text-sm font-medium border border-amber-400/30 transition-all duration-200 flex items-center gap-1.5 hover:scale-105"
+            class="px-3 py-1 rounded-full bg-amber-500/15 hover:bg-amber-500/30 text-amber-200 text-xs font-medium border border-amber-400/30 transition-all duration-200 flex items-center gap-1 whitespace-nowrap"
           >
             <span>🏠</span>
-            <span>Inicio</span>
+            <span class="hidden md:inline">Inicio</span>
           </a>
 
-          <!-- Botón Recuerdos -->
-          <button
-            id="navRecuerdosBtn"
-            class="px-3.5 py-1.5 rounded-full bg-[#1c1638]/70 hover:bg-amber-500/20 text-amber-200 text-xs sm:text-sm font-medium border border-amber-400/20 transition-all duration-200 flex items-center gap-1.5 hover:scale-105 cursor-pointer"
+          <!-- Capítulo 1: Oruguitas -->
+          <a
+            href="#oruguitasSection"
+            class="px-3 py-1 rounded-full bg-emerald-500/15 hover:bg-emerald-500/30 text-emerald-200 text-xs font-medium border border-emerald-400/30 transition-all duration-200 flex items-center gap-1 whitespace-nowrap"
+          >
+            <span>🐛</span>
+            <span>Oruguitas</span>
+          </a>
+
+          <!-- Capítulo 2: Hilo Rojo -->
+          <a
+            href="#hiloRojoSection"
+            class="px-3 py-1 rounded-full bg-rose-500/15 hover:bg-rose-500/30 text-rose-200 text-xs font-medium border border-rose-400/30 transition-all duration-200 flex items-center gap-1 whitespace-nowrap"
+          >
+            <span>🧵</span>
+            <span>Hilo Rojo</span>
+          </a>
+
+          <!-- Capítulo 3: Recuerdos -->
+          <a
+            href="#memoriesSection"
+            class="px-3 py-1 rounded-full bg-[#1c1638]/70 hover:bg-amber-500/20 text-amber-200 text-xs font-medium border border-amber-400/20 transition-all duration-200 flex items-center gap-1 whitespace-nowrap"
           >
             <span>📸</span>
             <span>Recuerdos</span>
-          </button>
+          </a>
 
           <!-- Botón Spotify -->
           <button
             id="navSpotifyBtn"
-            class="px-3.5 py-1.5 rounded-full bg-[#1db954]/20 hover:bg-[#1db954]/35 text-emerald-300 text-xs sm:text-sm font-medium border border-emerald-500/30 transition-all duration-200 flex items-center gap-1.5 hover:scale-105 shadow-[0_0_12px_rgba(29,185,84,0.3)] cursor-pointer"
+            class="px-3 py-1 rounded-full bg-[#1db954]/20 hover:bg-[#1db954]/35 text-emerald-300 text-xs font-medium border border-emerald-500/30 transition-all duration-200 flex items-center gap-1 shadow-[0_0_10px_rgba(29,185,84,0.3)] cursor-pointer whitespace-nowrap"
           >
-            <span class="text-sm">🟢</span>
+            <span class="text-xs">🟢</span>
             <span>Spotify</span>
           </button>
         </nav>
@@ -126,13 +148,13 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
       </button>
     </div>
 
-    <!-- MAIN CONTAINER -->
+    <!-- MAIN CONTENT WRAPPER -->
     <main class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 pt-20 pb-12">
 
       <!-- ============================================== -->
-      <!-- SECTION 1: HERO DEDICATION CARD (Screenshot 1) -->
+      <!-- TEMÁTICA 1: HERO DEDICATION CARD (Flores Amarillas) -->
       <!-- ============================================== -->
-      <section id="heroCardSection" class="w-full max-w-md my-auto flex flex-col items-center justify-center pt-2 pb-6">
+      <section id="heroCardSection" class="w-full max-w-md my-6 flex flex-col items-center justify-center scroll-mt-24">
         <div
           id="heroCard"
           class="relative w-full rounded-[2.5rem] p-6 sm:p-8 text-center bg-[#130f26]/95 border border-amber-400/40 shadow-[0_0_50px_rgba(245,158,11,0.25)] backdrop-blur-xl transition-all duration-500"
@@ -141,7 +163,8 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
           <div class="absolute inset-0 rounded-[2.5rem] bg-gradient-to-b from-amber-500/5 via-transparent to-purple-500/10 pointer-events-none"></div>
 
           <!-- Title: Flores Amarillas Para Ti -->
-          <div class="relative z-10 mb-4">
+          <div class="relative z-10 mb-3">
+            <span class="text-xs uppercase tracking-widest text-amber-400/80 font-semibold mb-1 block">Capítulo III</span>
             <h1 class="font-serif text-3xl sm:text-4xl text-amber-100 font-normal tracking-wide drop-shadow-[0_2px_12px_rgba(251,191,36,0.4)] leading-tight">
               Flores Amarillas<br />
               <span class="text-amber-200 font-medium">Para Ti</span>
@@ -164,7 +187,7 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
                 <span class="drop-shadow-[0_0_8px_rgba(244,114,182,0.8)] text-xs">💗</span>
               </div>
 
-              <!-- Bears Image (Optimized sizing so the button is always immediately visible) -->
+              <!-- Bears Image (Clean sizing so the button is always immediately visible) -->
               <div class="w-32 h-32 sm:w-36 sm:h-36 relative flex items-center justify-center overflow-hidden rounded-2xl drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
                 <img
                   src="https://media.tenor.com/7b583vI5ZJgAAAAM/abra%C3%A7ourso.gif"
@@ -184,7 +207,7 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
           </div>
 
           <!-- Romantic Phrase -->
-          <div class="relative z-10 my-4">
+          <div class="relative z-10 my-3">
             <p class="font-serif text-lg sm:text-xl text-amber-50/90 tracking-wide leading-snug drop-shadow-sm font-normal">
               Hoy mi universo florece en amarillo<br />
               <span class="italic text-amber-200">por ti</span>
@@ -192,9 +215,9 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
           </div>
 
           <!-- ============================================== -->
-          <!-- BOTON DE INICIO / ABRIR MI REGALO (100% VISIBLE) -->
+          <!-- BOTON DE INICIO / ABRIR MI REGALO -->
           <!-- ============================================== -->
-          <div class="relative z-20 mt-6 mb-1">
+          <div class="relative z-20 mt-5 mb-1">
             <button
               id="openGiftBtn"
               type="button"
@@ -208,17 +231,27 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
       </section>
 
       <!-- ============================================== -->
-      <!-- SECTION 2: GIFT REVEAL & DEDICATION LETTER    -->
+      <!-- TEMÁTICA 2: DOS ORUGUITAS EVOLUCIONANDO (Sección 1 solicitada) -->
+      <!-- ============================================== -->
+      <DosOruguitasSection />
+
+      <!-- ============================================== -->
+      <!-- TEMÁTICA 3: HILO ROJO DEL DESTINO (Sección 2 solicitada) -->
+      <!-- ============================================== -->
+      <HiloRojoSection />
+
+      <!-- ============================================== -->
+      <!-- RECUERDOS Y DEDICATORIA (Galería optimizada WebP) -->
       <!-- ============================================== -->
       <section
         id="memoriesSection"
-        class="w-full max-w-6xl mt-16 transition-all duration-700"
+        class="w-full max-w-6xl mt-12 transition-all duration-700 scroll-mt-24 chapter-section"
       >
         <!-- Heartfelt Dedication Banner -->
         <div class="text-center max-w-2xl mx-auto px-4 mb-10">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs uppercase tracking-widest font-semibold mb-4">
             <span>🌻</span>
-            <span>Para Mi Cielito</span>
+            <span>Nuestra Historia de Amor</span>
             <span>🌻</span>
           </div>
 
@@ -228,7 +261,7 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
 
           <p class="font-romantic text-lg md:text-2xl text-amber-100/80 italic leading-relaxed">
             "Las flores amarillas representan la alegría, la luz incondicional y el deseo de permanecer siempre juntos. 
-            Este no es solo un ramo digital: es un viaje por cada instante inolvidable que hemos compartido."
+            Este es un viaje por cada instante inolvidable que hemos compartido."
           </p>
 
           <!-- Banner to open Spotify Playlist directly -->
@@ -269,7 +302,7 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
               Galería de Recuerdos
             </h3>
             <p class="text-xs md:text-sm text-amber-200/60 mt-1">
-              Colección de nuestras mejores fotos juntos ({formattedMemories.length} recuerdos)
+              Colección de nuestros momentos juntos ({formattedMemories.length} recuerdos optimizados en WebP)
             </p>
           </div>
           <div class="hidden sm:flex items-center gap-2 text-xs text-amber-300/70 bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-400/20">
@@ -278,7 +311,7 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
           </div>
         </div>
 
-        <!-- MEMORIES GRID (Optimized with lazy-loading and content-visibility) -->
+        <!-- MEMORIES GRID (Optimized with WebP images and content-visibility) -->
         <div
           id="memoriesGrid"
           class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
@@ -354,51 +387,32 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
     <!-- Dedicated Spotify Modal -->
     <SpotifyModal />
 
-    <!-- CLIENT SCRIPT: BUNDLED GSAP & HIGH-PERFORMANCE LOGIC -->
+    <!-- CLIENT SCRIPT: GSAP SCROLLTRIGGER & THEMED NARRATIVE LOGIC -->
     <script>
       import gsap from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+      gsap.registerPlugin(ScrollTrigger);
 
       document.addEventListener('DOMContentLoaded', () => {
-        // 1. INTRO ANIMATIONS FOR HERO CARD (GSAP)
-        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+        // ====================================================
+        // 1. HERO CARD INTRO ANIMATIONS
+        // ====================================================
+        const heroTL = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-        tl.from('#heroCard', {
-          duration: 0.9,
-          scale: 0.92,
-          opacity: 0,
-          y: 30,
-          ease: 'back.out(1.4)',
-        })
-          .from(
-            '#heroCard h1',
-            { duration: 0.6, opacity: 0, y: -15 },
-            '-=0.5'
-          )
-          .from(
-            '#leftSunflower',
-            { duration: 0.6, scale: 0, rotation: -30, ease: 'back.out(2)' },
-            '-=0.4'
-          )
-          .from(
-            '#rightSunflower',
-            { duration: 0.6, scale: 0, rotation: 30, ease: 'back.out(2)' },
-            '-=0.5'
-          )
-          .from(
-            '#bearsContainer',
-            { duration: 0.7, scale: 0.85, opacity: 0, ease: 'back.out(1.2)' },
-            '-=0.5'
-          )
-          .from(
-            '#heroCard p',
-            { duration: 0.5, opacity: 0, y: 10 },
-            '-=0.4'
-          )
-          .from(
-            '#openGiftBtn',
-            { duration: 0.6, scale: 0.85, opacity: 0.4, ease: 'back.out(2)' },
-            '-=0.3'
-          );
+        heroTL
+          .from('#heroCard', {
+            duration: 0.8,
+            scale: 0.94,
+            opacity: 0,
+            y: 25,
+            ease: 'back.out(1.4)',
+          })
+          .from('#heroCard h1', { duration: 0.5, opacity: 0, y: -15 }, '-=0.4')
+          .from('#leftSunflower', { duration: 0.5, scale: 0, rotation: -30, ease: 'back.out(2)' }, '-=0.3')
+          .from('#rightSunflower', { duration: 0.5, scale: 0, rotation: 30, ease: 'back.out(2)' }, '-=0.4')
+          .from('#bearsContainer', { duration: 0.6, scale: 0.85, opacity: 0, ease: 'back.out(1.2)' }, '-=0.4')
+          .from('#heroCard p', { duration: 0.4, opacity: 0, y: 10 }, '-=0.3');
 
         // Continuous subtle animation on sunflowers
         gsap.to('#leftSunflower', {
@@ -417,51 +431,155 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
           ease: 'sine.inOut',
         });
 
-        // 2. OPEN GIFT BUTTON HANDLER
+        // ====================================================
+        // 2. SECCIÓN 1: DOS ORUGUITAS -> MARIPOSAS (GSAP)
+        // ====================================================
+        const caterpillarsStage = document.getElementById('caterpillarsStage');
+        const cocoonStage = document.getElementById('cocoonStage');
+        const butterfliesStage = document.getElementById('butterfliesStage');
+        const evolveBtn = document.getElementById('evolveBtn');
+        const evolveBtnText = document.getElementById('evolveBtnText');
+
+        let isEvolved = false;
+
+        function runMetamorphosis() {
+          if (isEvolved) return;
+          isEvolved = true;
+
+          const metaTL = gsap.timeline({ defaults: { ease: 'power2.inOut' } });
+
+          // Phase 1: Caterpillars move closer
+          metaTL
+            .to('#oruguita1', { x: 25, duration: 0.6 })
+            .to('#oruguita2', { x: -25, duration: 0.6 }, '-=0.6')
+            .to('#caterpillarHeart', { scale: 1.4, duration: 0.4, yoyo: true, repeat: 1 })
+            // Phase 2: Fade out caterpillars, fade in Cocoon
+            .to(caterpillarsStage, { opacity: 0, scale: 0.8, duration: 0.5 })
+            .set(cocoonStage, { opacity: 1, pointerEvents: 'auto' })
+            .fromTo('#cocoonStage div', { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7, ease: 'back.out(1.5)' })
+            // Phase 3: Cocoon shines and bursts into Butterflies
+            .to('#cocoonStage div', { scale: 1.2, duration: 0.6, yoyo: true, repeat: 1 })
+            .to(cocoonStage, { opacity: 0, scale: 1.3, duration: 0.4 })
+            .set(butterfliesStage, { opacity: 1, pointerEvents: 'auto' })
+            .fromTo('#butterfliesStage', { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.8, ease: 'back.out(1.4)' })
+            .call(() => {
+              // Butterfly wings flapping
+              gsap.to('.wing-left', {
+                transformOrigin: 'right center',
+                scaleX: 0.3,
+                duration: 0.18,
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut',
+              });
+              gsap.to('.wing-right', {
+                transformOrigin: 'left center',
+                scaleX: 0.3,
+                duration: 0.18,
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut',
+              });
+              // Gentle floating path
+              gsap.to('#butterfly1', { y: -12, duration: 2, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+              gsap.to('#butterfly2', { y: 12, duration: 2.3, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+
+              if (evolveBtnText) evolveBtnText.textContent = '¡Mariposas Libres!';
+            });
+        }
+
+        // ScrollTrigger for Oruguitas Metamorphosis
+        ScrollTrigger.create({
+          trigger: '#oruguitasSection',
+          start: 'top 70%',
+          onEnter: () => {
+            runMetamorphosis();
+          },
+        });
+
+        evolveBtn?.addEventListener('click', runMetamorphosis);
+
+        // ====================================================
+        // 3. SECCIÓN 2: HILO ROJO DEL DESTINO (GSAP)
+        // ====================================================
+        const hiloPathMain = document.getElementById('hiloPathMain') as SVGPathElement | null;
+        const hiloPathGlow = document.getElementById('hiloPathGlow') as SVGPathElement | null;
+        const pullThreadBtn = document.getElementById('pullThreadBtn');
+        const pullThreadBtnText = document.getElementById('pullThreadBtnText');
+        const hiloAnchorLeft = document.getElementById('hiloAnchorLeft');
+        const hiloAnchorRight = document.getElementById('hiloAnchorRight');
+        const hiloHeartKnot = document.getElementById('hiloHeartKnot');
+
+        if (hiloPathMain) {
+          const pathLength = hiloPathMain.getTotalLength ? hiloPathMain.getTotalLength() : 650;
+          gsap.set([hiloPathMain, hiloPathGlow], {
+            strokeDasharray: pathLength,
+            strokeDashoffset: pathLength,
+          });
+
+          // ScrollTrigger draws the red thread when scrolled into view
+          gsap.to([hiloPathMain, hiloPathGlow], {
+            strokeDashoffset: 0,
+            duration: 1.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: '#hiloRojoSection',
+              start: 'top 75%',
+            },
+          });
+        }
+
+        // Interactive "Tirar del Hilo" (Pull thread closer)
+        let isThreadPulled = false;
+        pullThreadBtn?.addEventListener('click', () => {
+          if (!isThreadPulled) {
+            isThreadPulled = true;
+            if (pullThreadBtnText) pullThreadBtnText.textContent = '¡Siempre Conectados!';
+
+            gsap.to(hiloAnchorLeft, { x: 55, duration: 0.8, ease: 'power2.out' });
+            gsap.to(hiloAnchorRight, { x: -55, duration: 0.8, ease: 'power2.out' });
+            gsap.to(hiloHeartKnot, { scale: 1.5, duration: 0.4, yoyo: true, repeat: 3, ease: 'power2.inOut' });
+
+            // Spawn floating hearts
+            if (pullThreadBtn) spawnFloatingHeart(pullThreadBtn);
+          } else {
+            isThreadPulled = false;
+            if (pullThreadBtnText) pullThreadBtnText.textContent = 'Tirar del Hilo';
+            gsap.to(hiloAnchorLeft, { x: 0, duration: 0.6, ease: 'power2.out' });
+            gsap.to(hiloAnchorRight, { x: 0, duration: 0.6, ease: 'power2.out' });
+          }
+        });
+
+        // ====================================================
+        // 4. OPEN GIFT BUTTON HANDLER (Flores Amarillas)
+        // ====================================================
         const openGiftBtn = document.getElementById('openGiftBtn');
         const memoriesSection = document.getElementById('memoriesSection');
 
         openGiftBtn?.addEventListener('click', () => {
-          // Play magical chime audio
           playCelebrationSound();
-
-          // Spawn celebration confetti particles
           spawnConfetti();
 
-          // Button click feedback
           gsap.to(openGiftBtn, {
             scale: 0.92,
             duration: 0.15,
             yoyo: true,
             repeat: 1,
             onComplete: () => {
-              if (memoriesSection) {
-                // Smooth scroll to memories section
-                memoriesSection.scrollIntoView({ behavior: 'smooth' });
-              }
+              memoriesSection?.scrollIntoView({ behavior: 'smooth' });
             },
           });
         });
 
-        // 3. NAVBAR & FLOATING INICIO BUTTON HANDLERS
-        const navInicioBtn = document.getElementById('navInicioBtn');
-        const navRecuerdosBtn = document.getElementById('navRecuerdosBtn');
+        // ====================================================
+        // 5. NAVBAR & BACK TO TOP HANDLERS
+        // ====================================================
         const floatingBackToTopBtn = document.getElementById('floatingBackToTopBtn');
-
-        navInicioBtn?.addEventListener('click', (e) => {
-          e.preventDefault();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-
-        navRecuerdosBtn?.addEventListener('click', () => {
-          memoriesSection?.scrollIntoView({ behavior: 'smooth' });
-        });
 
         floatingBackToTopBtn?.addEventListener('click', () => {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        // Show/hide floating back-to-top button on scroll
         window.addEventListener('scroll', () => {
           if (window.scrollY > 350) {
             floatingBackToTopBtn?.classList.remove('hidden');
@@ -472,7 +590,9 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
           }
         }, { passive: true });
 
-        // 4. SPOTIFY MODAL LOGIC
+        // ====================================================
+        // 6. SPOTIFY MODAL LOGIC
+        // ====================================================
         const spotifyModal = document.getElementById('spotifyModal');
         const spotifyModalBox = document.getElementById('spotifyModalBox');
         const spotifyCloseBtn = document.getElementById('spotifyCloseBtn');
@@ -486,12 +606,7 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
             spotifyModal.classList.add('flex');
             document.body.style.overflow = 'hidden';
 
-            gsap.fromTo(
-              spotifyModal,
-              { opacity: 0 },
-              { opacity: 1, duration: 0.25 }
-            );
-
+            gsap.fromTo(spotifyModal, { opacity: 0 }, { opacity: 1, duration: 0.25 });
             gsap.fromTo(
               spotifyModalBox,
               { scale: 0.88, opacity: 0, y: 20 },
@@ -526,7 +641,9 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
           if (e.target === spotifyModal) closeSpotifyModal();
         });
 
-        // 5. PHOTO MEMORIES MODAL LOGIC
+        // ====================================================
+        // 7. PHOTO MEMORIES MODAL LOGIC
+        // ====================================================
         const modal = document.getElementById('photoModal');
         const modalBox = document.getElementById('modalBox');
         const modalImg = document.getElementById('modalImage') as HTMLImageElement;
@@ -542,7 +659,6 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
         const loveBtn = document.getElementById('loveBtn');
         const loveCount = document.getElementById('loveCount');
 
-        // Extract memory data from DOM
         const cards = document.querySelectorAll('.memory-card');
         const memoriesData: Array<{ id: number; fullUrl: string; title: string; date: string; description: string }> = [];
 

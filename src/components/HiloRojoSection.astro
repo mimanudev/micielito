@@ -1,0 +1,124 @@
+---
+// Sección 2: El Hilo Rojo del Destino
+---
+
+<section
+  id="hiloRojoSection"
+  class="w-full max-w-5xl mx-auto my-20 px-4 scroll-mt-24"
+  style="content-visibility: auto; contain-intrinsic-size: 650px;"
+>
+  <div class="relative rounded-[2.5rem] p-6 sm:p-10 md:p-12 bg-gradient-to-b from-[#18091a]/95 via-[#230d24]/90 to-[#120516]/95 border border-rose-500/35 shadow-[0_0_55px_rgba(244,63,94,0.18)] backdrop-blur-xl overflow-hidden text-center">
+    
+    <!-- Deep Crimson & Rose Ambient Glow -->
+    <div class="absolute -top-24 -right-24 w-80 h-80 bg-rose-600/15 rounded-full blur-[110px] pointer-events-none"></div>
+    <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-red-600/15 rounded-full blur-[110px] pointer-events-none"></div>
+
+    <!-- Chapter Badge -->
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/15 border border-rose-400/30 text-rose-300 text-xs uppercase tracking-widest font-semibold mb-4">
+      <span>🧵</span>
+      <span>Capítulo II — El Destino Nos Unió</span>
+      <span>❤️</span>
+    </div>
+
+    <!-- Title -->
+    <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl text-rose-100 font-medium tracking-wide drop-shadow-[0_2px_12px_rgba(244,63,94,0.4)] mb-4">
+      El Hilo Rojo del Destino
+    </h2>
+
+    <!-- Poetic Narrative of the Legend -->
+    <p class="font-romantic text-lg sm:text-xl md:text-2xl text-rose-100/90 max-w-2xl mx-auto italic leading-relaxed mb-8">
+      "Un hilo rojo invisible conecta a las personas destinadas a encontrarse.<br class="hidden sm:inline" />
+      No importa el tiempo, el lugar ni las circunstancias... El hilo podrá estirarse o enredarse, pero jamás romperse."
+    </p>
+
+    <!-- ANIMATION STAGE: The Red Thread drawing and connecting -->
+    <div class="relative w-full max-w-2xl mx-auto h-52 sm:h-64 my-4 rounded-3xl bg-black/45 border border-rose-500/25 flex items-center justify-between px-4 sm:px-10 overflow-hidden shadow-inner">
+      
+      <!-- Left Anchor: Person 1 (Tú) -->
+      <div id="hiloAnchorLeft" class="relative z-20 flex flex-col items-center select-none transition-transform duration-500">
+        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-rose-950 to-rose-700 border-2 border-rose-400/60 flex items-center justify-center text-2xl shadow-[0_0_25px_rgba(244,63,94,0.6)]">
+          👦🏻
+        </div>
+        <span class="text-xs font-serif text-rose-200 mt-2 font-medium">Yo</span>
+        <!-- Little Tied Pinky Bow -->
+        <span class="text-xs text-red-400 animate-pulse">🎀</span>
+      </div>
+
+      <!-- CENTER SVG: The Intertwined Red Thread Path -->
+      <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+        <svg viewBox="0 0 600 200" class="w-full h-full preserve-3d" preserveAspectRatio="none">
+          <defs>
+            <!-- Glowing Red Filter -->
+            <filter id="redThreadGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3.5" result="glow" />
+              <feMerge>
+                <feMergeNode in="glow" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="redThreadGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#f43f5e" />
+              <stop offset="50%" stop-color="#ef4444" />
+              <stop offset="100%" stop-color="#f43f5e" />
+            </linearGradient>
+          </defs>
+
+          <!-- Outer Soft Aura Thread -->
+          <path
+            id="hiloPathGlow"
+            d="M 60 100 C 180 30, 220 170, 300 100 C 380 30, 420 170, 540 100"
+            fill="none"
+            stroke="rgba(239, 68, 68, 0.3)"
+            stroke-width="8"
+            stroke-linecap="round"
+          />
+
+          <!-- Main Glowing Red Thread Path -->
+          <path
+            id="hiloPathMain"
+            d="M 60 100 C 180 30, 220 170, 300 100 C 380 30, 420 170, 540 100"
+            fill="none"
+            stroke="url(#redThreadGrad)"
+            stroke-width="3.5"
+            stroke-linecap="round"
+            filter="url(#redThreadGlow)"
+            style="stroke-dasharray: 650; stroke-dashoffset: 0;"
+          />
+
+          <!-- Heart Knot in the center -->
+          <g id="hiloHeartKnot" transform="translate(300, 100)">
+            <circle cx="0" cy="0" r="14" fill="#881337" stroke="#fb7185" stroke-width="2" />
+            <text x="0" y="5" text-anchor="middle" font-size="12" fill="#fff">❤️</text>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Right Anchor: Person 2 (Mi Cielito) -->
+      <div id="hiloAnchorRight" class="relative z-20 flex flex-col items-center select-none transition-transform duration-500">
+        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-amber-950 to-rose-700 border-2 border-rose-400/60 flex items-center justify-center text-2xl shadow-[0_0_25px_rgba(244,63,94,0.6)]">
+          👧🏻
+        </div>
+        <span class="text-xs font-serif text-rose-200 mt-2 font-medium">Mi Cielito</span>
+        <!-- Little Tied Pinky Bow -->
+        <span class="text-xs text-red-400 animate-pulse">🎀</span>
+      </div>
+    </div>
+
+    <!-- Interactive Button: Tensionar / Acercar Hilo -->
+    <div class="mt-6 flex items-center justify-center gap-3">
+      <button
+        id="pullThreadBtn"
+        type="button"
+        class="px-6 py-2.5 rounded-full bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-400 hover:to-red-500 text-white font-semibold text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_25px_rgba(244,63,94,0.5)] hover:shadow-[0_0_40px_rgba(244,63,94,0.85)] transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-2"
+      >
+        <span>🧵</span>
+        <span id="pullThreadBtnText">Tirar del Hilo</span>
+        <span>❤️</span>
+      </button>
+
+      <span class="text-[11px] text-rose-300/60 hidden sm:inline">
+        (Prueba tocarlo para acercarnos más)
+      </span>
+    </div>
+  </div>
+</section>
