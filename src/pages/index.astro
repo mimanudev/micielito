@@ -32,6 +32,7 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
     <link rel="icon" href={`${baseUrl}/favicon.ico`} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
+    <link rel="preload" as="image" href={`${baseUrl}/images/compressed/inicio.webp`} />
     <title>Flores Amarillas Para Ti 🌻 | Mi Cielito</title>
     <meta
       name="description"
@@ -184,7 +185,7 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
               <!-- Bears Image (Clean sizing so the button is always immediately visible) -->
               <div class="w-32 h-32 sm:w-36 sm:h-36 relative flex items-center justify-center overflow-hidden rounded-2xl drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
                 <img
-                  src={`${baseUrl}/images/hugging-bears.svg`}
+                  src={`${baseUrl}/images/compressed/inicio.webp`}
                   alt="Ositos abrazándose con cariño"
                   width="288"
                   height="288"
