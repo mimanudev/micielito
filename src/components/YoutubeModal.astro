@@ -1,0 +1,61 @@
+---
+// Modal dedicado para el video de YouTube - Dos Oruguitas
+---
+
+<div
+  id="youtubeModal"
+  class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/90 backdrop-blur-md transition-all duration-300 select-none"
+  aria-modal="true"
+  role="dialog"
+>
+  <!-- Modal Card -->
+  <div
+    id="youtubeModalBox"
+    class="relative w-full max-w-3xl bg-[#0a0d1a] border border-emerald-500/30 rounded-3xl shadow-[0_0_70px_rgba(52,211,153,0.25)] overflow-hidden"
+  >
+    <!-- Close Button -->
+    <button
+      id="youtubeCloseBtn"
+      class="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/70 hover:bg-emerald-500 text-emerald-300 hover:text-black border border-emerald-500/30 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:rotate-90 cursor-pointer shadow-lg"
+      aria-label="Cerrar video"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+
+    <!-- Header -->
+    <div class="flex items-center gap-3 p-5 border-b border-emerald-500/15">
+      <div class="w-9 h-9 rounded-full bg-emerald-500/15 border border-emerald-400/40 flex items-center justify-center text-lg shadow-[0_0_12px_rgba(52,211,153,0.4)]">
+        🦋
+      </div>
+      <div>
+        <h3 class="font-serif text-lg text-amber-100 font-medium leading-tight">
+          Dos Oruguitas — Sebastián Yatra
+        </h3>
+        <p class="text-xs text-emerald-300/70 mt-0.5">Nuestra canción de crecimiento juntos 🌿</p>
+      </div>
+    </div>
+
+    <!-- YouTube Embed -->
+    <div class="relative w-full aspect-video bg-black">
+      <iframe
+        id="ytIframe"
+        src=""
+        data-src="https://www.youtube.com/embed/n_k8H3uct1o?autoplay=1&rel=0"
+        title="Sebastián Yatra - Dos Oruguitas (Live Performance)"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+        class="absolute inset-0 w-full h-full"
+      ></iframe>
+    </div>
+
+    <!-- Bottom note -->
+    <div class="p-4 flex items-center justify-between text-xs text-amber-100/50 border-t border-emerald-500/10">
+      <span class="flex items-center gap-1.5">🎵 Nuestra canción de transformación</span>
+      <span class="text-emerald-400/70 font-mono">Dos Oruguitas 🦋</span>
+    </div>
+  </div>
+</div>

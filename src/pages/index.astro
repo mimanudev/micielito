@@ -6,6 +6,7 @@ import PetalsCanvas from '../components/PetalsCanvas.astro';
 import CircularBadge from '../components/CircularBadge.astro';
 import Modal from '../components/Modal.astro';
 import SpotifyModal from '../components/SpotifyModal.astro';
+import YoutubeModal from '../components/YoutubeModal.astro';
 import DosOruguitasSection from '../components/DosOruguitasSection.astro';
 import HiloRojoSection from '../components/HiloRojoSection.astro';
 import Menuin from '../components/menuin.astro';
@@ -34,7 +35,6 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
     <title>Flores Amarillas Para Ti 🌻 | Mi Cielito</title>
     <meta
       name="description"
-      content="Una dedicatoria especial en 3 capítulos: Dos Oruguitas, El Hilo Rojo del Destino y Flores Amarillas con nuestra galería de recuerdos."
     />
 
     <!-- Google Fonts Preconnect for Ultra-Fast Loading -->
@@ -164,7 +164,7 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
 
           <!-- Title: Flores Amarillas Para Ti -->
           <div class="relative z-10 mb-3">
-            <span class="text-xs uppercase tracking-widest text-amber-400/80 font-semibold mb-1 block">Capítulo III</span>
+
             <h1 class="font-serif text-3xl sm:text-4xl text-amber-100 font-normal tracking-wide drop-shadow-[0_2px_12px_rgba(251,191,36,0.4)] leading-tight">
               Flores Amarillas<br />
               <span class="text-amber-200 font-medium">Para Ti</span>
@@ -180,22 +180,18 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
 
             <!-- Central Hugging Bears Sticker -->
             <div id="bearsContainer" class="relative flex flex-col items-center justify-center">
-              <!-- Floating Glowing Pink Hearts over the bears -->
-              <div class="absolute -top-5 flex items-center gap-1 text-pink-400 text-lg pointer-events-none animate-bounce" style="animation-duration: 2.2s;">
-                <span class="drop-shadow-[0_0_8px_rgba(244,114,182,0.8)] text-sm">💖</span>
-                <span class="drop-shadow-[0_0_10px_rgba(236,72,153,0.9)] text-lg -translate-y-1">💕</span>
-                <span class="drop-shadow-[0_0_8px_rgba(244,114,182,0.8)] text-xs">💗</span>
-              </div>
 
               <!-- Bears Image (Clean sizing so the button is always immediately visible) -->
               <div class="w-32 h-32 sm:w-36 sm:h-36 relative flex items-center justify-center overflow-hidden rounded-2xl drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
                 <img
-                  src="https://media.tenor.com/7b583vI5ZJgAAAAM/abra%C3%A7ourso.gif"
+                  src={`${baseUrl}/images/hugging-bears.svg`}
                   alt="Ositos abrazándose con cariño"
+                  width="288"
+                  height="288"
                   class="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(254,240,138,0.25)]"
                   loading="eager"
+                  fetchpriority="high"
                   decoding="async"
-                  onerror="this.onerror=null; this.src='https://c.tenor.com/7b583vI5ZJgAAAAC/abra%C3%A7ourso.gif';"
                 />
               </div>
             </div>
@@ -209,8 +205,8 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
           <!-- Romantic Phrase -->
           <div class="relative z-10 my-3">
             <p class="font-serif text-lg sm:text-xl text-amber-50/90 tracking-wide leading-snug drop-shadow-sm font-normal">
-              Hoy mi universo florece en amarillo<br />
-              <span class="italic text-amber-200">por ti</span>
+            Juntos construimos historias hermosas<br />
+              <span class="italic text-amber-200">gracias por existir</span>
             </p>
           </div>
 
@@ -221,9 +217,9 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
             <button
               id="openGiftBtn"
               type="button"
-              class="w-full sm:w-auto px-9 py-3.5 rounded-full bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-amber-950 font-bold tracking-widest text-sm uppercase shadow-[0_0_30px_rgba(245,158,11,0.7)] hover:shadow-[0_0_55px_rgba(245,158,11,1)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 mx-auto border border-amber-200/50"
+              class="w-full justify sm:w-auto px-9 py-3.5 rounded-full bg-gradient-to-r from-amber-300 via-yellow-100 to-amber-500 text-amber-950 font-bold tracking-widest text-sm uppercase shadow-[0_0_30px_rgba(245,158,11,0.7)] hover:shadow-[0_0_55px_rgba(245,158,11,1)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 mx-auto border border-amber-200/50"
             >
-              <span>ABRIR MI REGALO</span>
+              <span>ABRE RECUERDOS</span>
               <span class="text-base animate-pulse">✨</span>
             </button>
           </div>
@@ -302,7 +298,7 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
               Galería de Recuerdos
             </h3>
             <p class="text-xs md:text-sm text-amber-200/60 mt-1">
-              Colección de nuestros momentos juntos ({formattedMemories.length} recuerdos optimizados en WebP)
+              Colección de nuestros momentos juntos ({formattedMemories.length})
             </p>
           </div>
           <div class="hidden sm:flex items-center gap-2 text-xs text-amber-300/70 bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-400/20">
@@ -386,6 +382,9 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
 
     <!-- Dedicated Spotify Modal -->
     <SpotifyModal />
+
+    <!-- Dedicated YouTube Modal -->
+    <YoutubeModal />
 
     <!-- CLIENT SCRIPT: GSAP SCROLLTRIGGER & THEMED NARRATIVE LOGIC -->
     <script>
@@ -642,7 +641,63 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
         });
 
         // ====================================================
-        // 7. PHOTO MEMORIES MODAL LOGIC
+        // 7. YOUTUBE MODAL LOGIC
+        // ====================================================
+        const youtubeModal = document.getElementById('youtubeModal');
+        const youtubeModalBox = document.getElementById('youtubeModalBox');
+        const youtubeCloseBtn = document.getElementById('youtubeCloseBtn');
+        const ytIframe = document.getElementById('ytIframe') as HTMLIFrameElement | null;
+        const openYoutubeBtn = document.getElementById('openYoutubeBtn');
+
+        function openYoutubeModal() {
+          if (youtubeModal && youtubeModalBox) {
+            youtubeModal.classList.remove('hidden');
+            youtubeModal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+
+            if (ytIframe && !ytIframe.src) {
+              ytIframe.src = ytIframe.dataset.src || 'https://www.youtube.com/embed/n_k8H3uct1o?autoplay=1&rel=0';
+            }
+
+            gsap.fromTo(youtubeModal, { opacity: 0 }, { opacity: 1, duration: 0.25 });
+            gsap.fromTo(
+              youtubeModalBox,
+              { scale: 0.88, opacity: 0, y: 20 },
+              { scale: 1, opacity: 1, y: 0, duration: 0.35, ease: 'back.out(1.3)' }
+            );
+          }
+        }
+
+        function closeYoutubeModal() {
+          if (youtubeModal && youtubeModalBox) {
+            gsap.to(youtubeModalBox, {
+              scale: 0.9,
+              opacity: 0,
+              y: 15,
+              duration: 0.2,
+              ease: 'power2.in',
+              onComplete: () => {
+                youtubeModal.classList.add('hidden');
+                youtubeModal.classList.remove('flex');
+                document.body.style.overflow = '';
+              },
+            });
+            gsap.to(youtubeModal, { opacity: 0, duration: 0.2 });
+
+            if (ytIframe) {
+              ytIframe.src = '';
+            }
+          }
+        }
+
+        openYoutubeBtn?.addEventListener('click', openYoutubeModal);
+        youtubeCloseBtn?.addEventListener('click', closeYoutubeModal);
+        youtubeModal?.addEventListener('click', (e) => {
+          if (e.target === youtubeModal) closeYoutubeModal();
+        });
+
+        // ====================================================
+        // 8. PHOTO MEMORIES MODAL LOGIC
         // ====================================================
         const modal = document.getElementById('photoModal');
         const modalBox = document.getElementById('modalBox');
@@ -762,6 +817,8 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
         window.addEventListener('keydown', (e) => {
           if (spotifyModal && !spotifyModal.classList.contains('hidden')) {
             if (e.key === 'Escape') closeSpotifyModal();
+          } else if (youtubeModal && !youtubeModal.classList.contains('hidden')) {
+            if (e.key === 'Escape') closeYoutubeModal();
           } else if (modal && !modal.classList.contains('hidden')) {
             if (e.key === 'Escape') closeModal();
             if (e.key === 'ArrowLeft') prevHandler();
