@@ -1,0 +1,39 @@
+---
+// Componente de contacto opcional
+---
+
+<div class="flex justify-center p-7">
+    <div class="h-[21rem] w-[29rem] bg-stone-900/80 border border-amber-500/20 backdrop-blur-md p-5 rounded-2xl text-white shadow-xl">
+        <h3 class="text-lg font-serif text-amber-200 mb-3 text-center">Escríbeme un mensajito</h3>
+        <form id="contactForm" class="max-w-sm mx-auto space-y-3">
+            <div>
+                <label for="emailContact" class="block mb-1 text-xs font-medium text-amber-100/70">Tu correo</label>
+                <input
+                    id="emailContact"
+                    type="email"
+                    class="bg-black/40 border border-amber-500/30 text-sm rounded-lg focus:ring-amber-400 focus:border-amber-400 block w-full p-2.5 text-white placeholder-amber-200/30"
+                    placeholder="nombre@correo.com"
+                    required
+                />
+            </div>
+            <div>
+                <label for="message" class="block mb-1 text-xs font-medium text-amber-100/70">Mensaje:</label>
+                <textarea
+                    id="message"
+                    rows="3"
+                    class="block p-2.5 w-full text-sm rounded-lg border border-amber-500/30 bg-black/40 text-white placeholder-amber-200/30 focus:ring-amber-400 focus:border-amber-400"
+                    placeholder="Escribe tu dedicatoria o mensaje aquí..."
+                ></textarea>
+            </div>
+            <div class="flex justify-center pt-2">
+                <button
+                    id="BtnSend"
+                    type="button"
+                    class="px-5 py-2 text-sm font-medium text-amber-950 inline-flex items-center bg-gradient-to-r from-amber-300 to-amber-500 hover:from-amber-400 hover:to-amber-600 transition duration-300 hover:scale-105 justify-center rounded-full font-semibold shadow-md shadow-amber-500/30"
+                >
+                    Enviar Mensaje ❤️
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

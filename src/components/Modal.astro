@@ -1,0 +1,127 @@
+---
+// Modal de visualización de fotos con descripción y controles
+---
+
+<div
+  id="photoModal"
+  class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-5 md:p-8 bg-black/85 backdrop-blur-md transition-all duration-300"
+  aria-modal="true"
+  role="dialog"
+>
+  <!-- Modal Content Container -->
+  <div
+    id="modalBox"
+    class="relative w-full max-w-4xl bg-[#140f28] border border-amber-400/30 rounded-3xl shadow-[0_0_60px_rgba(245,158,11,0.25)] overflow-hidden flex flex-col md:flex-row max-h-[92vh] select-none"
+  >
+    <!-- Close Button -->
+    <button
+      id="modalCloseBtn"
+      class="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-black/60 hover:bg-amber-500 text-amber-200 hover:text-black border border-amber-400/40 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:rotate-90 shadow-lg cursor-pointer"
+      aria-label="Cerrar ventana modal"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+
+    <!-- Left Side: Large Photo Area -->
+    <div class="w-full md:w-3/5 bg-black/70 flex items-center justify-center p-3 md:p-6 relative min-h-[300px] md:min-h-[460px] overflow-hidden group">
+      <!-- Ambient Glow Behind Image -->
+      <div class="absolute inset-0 bg-gradient-to-t from-amber-500/10 via-transparent to-purple-900/20 pointer-events-none"></div>
+
+      <!-- Main Modal Image -->
+      <img
+        id="modalImage"
+        src=""
+        alt="Foto del recuerdo"
+        class="max-h-[60vh] md:max-h-[78vh] w-auto max-w-full object-contain rounded-2xl shadow-2xl relative z-10 transition-transform duration-300"
+      />
+
+      <!-- Navigation Arrows for Desktop (Over Image) -->
+      <button
+        id="modalPrevBtn"
+        class="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/60 hover:bg-amber-400 text-amber-100 hover:text-black border border-amber-400/30 flex items-center justify-center transition-all duration-300 hover:scale-115 shadow-xl cursor-pointer"
+        title="Recuerdo anterior (Flecha izquierda)"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+
+      <button
+        id="modalNextBtn"
+        class="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/60 hover:bg-amber-400 text-amber-100 hover:text-black border border-amber-400/30 flex items-center justify-center transition-all duration-300 hover:scale-115 shadow-xl cursor-pointer"
+        title="Siguiente recuerdo (Flecha derecha)"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Right Side: Memory Details & Dedication Text -->
+    <div class="w-full md:w-2/5 p-6 md:p-8 flex flex-col justify-between bg-gradient-to-b from-[#181235] via-[#140e2c] to-[#0f0a21] border-t md:border-t-0 md:border-l border-amber-400/20 overflow-y-auto">
+      <div>
+        <!-- Top Tags: Sunflower + Memory Index -->
+        <div class="flex items-center justify-between gap-2 mb-4">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-400/30">
+            <span>🌻</span>
+            <span id="modalDate">Fecha</span>
+          </span>
+          <span id="modalCounter" class="text-xs text-amber-200/60 font-mono tracking-wider">
+            1 / 24
+          </span>
+        </div>
+
+        <!-- Title -->
+        <h3 id="modalTitle" class="font-serif text-2xl md:text-3xl font-medium text-amber-100 mb-3 leading-snug drop-shadow-sm">
+          Título del recuerdo
+        </h3>
+
+        <!-- Decorative Divider -->
+        <div class="w-16 h-0.5 bg-gradient-to-r from-amber-400 to-transparent my-3"></div>
+
+        <!-- Romantic Dedication Description -->
+        <div class="mt-4">
+          <p class="text-xs uppercase tracking-widest text-amber-300/60 font-medium mb-1.5">Nuestra Historia</p>
+          <p id="modalDescription" class="font-romantic text-lg md:text-xl text-amber-50/90 leading-relaxed italic">
+            Descripción del recuerdo...
+          </p>
+        </div>
+      </div>
+
+      <!-- Bottom Interactive Controls -->
+      <div class="pt-6 mt-6 border-t border-amber-400/15 flex items-center justify-between gap-3">
+        <!-- Interactive Love Reaction Button -->
+        <button
+          id="loveBtn"
+          class="relative inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-pink-600/30 to-rose-600/30 hover:from-pink-600/50 hover:to-rose-600/50 border border-pink-400/40 text-pink-200 text-sm font-medium transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer shadow-md"
+        >
+          <span class="text-lg animate-pulse">❤️</span>
+          <span id="loveText">Te Amo</span>
+          <span id="loveCount" class="text-xs px-1.5 py-0.5 rounded-full bg-pink-500/40 font-mono font-bold">1</span>
+        </button>
+
+        <!-- Navigation Buttons (Mobile friendly) -->
+        <div class="flex items-center gap-2 md:hidden">
+          <button
+            id="modalPrevBtnMobile"
+            class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-200 border border-amber-400/30 flex items-center justify-center"
+          >
+            ←
+          </button>
+          <button
+            id="modalNextBtnMobile"
+            class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-200 border border-amber-400/30 flex items-center justify-center"
+          >
+            →
+          </button>
+        </div>
+
+        <span class="hidden md:inline text-xs text-amber-300/40">
+          Usa las flechas ◄ ►
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
