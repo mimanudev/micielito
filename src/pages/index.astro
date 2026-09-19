@@ -5,6 +5,7 @@ import SunflowerSvg from '../components/SunflowerSvg.astro';
 import PetalsCanvas from '../components/PetalsCanvas.astro';
 import CircularBadge from '../components/CircularBadge.astro';
 import Modal from '../components/Modal.astro';
+import SpotifyModal from '../components/SpotifyModal.astro';
 import Menuin from '../components/menuin.astro';
 
 // Safe base URL handling for GitHub Pages deployment
@@ -31,108 +32,176 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
     <title>Flores Amarillas Para Ti 🌻 | Mi Cielito</title>
     <meta
       name="description"
-      content="Una dedicatoria especial con flores amarillas, música y nuestra galería de recuerdos juntos."
+      content="Una dedicatoria especial con flores amarillas, música en Spotify y nuestra galería de recuerdos juntos."
     />
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts Preconnect for Ultra-Fast Loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+
+    <style>
+      /* CSS Performance Optimizations */
+      .memory-card {
+        content-visibility: auto;
+        contain-intrinsic-size: 320px;
+      }
+    </style>
   </head>
   <body class="bg-[#0c0915] text-slate-100 min-h-screen relative overflow-x-hidden selection:bg-amber-400 selection:text-black">
-    <!-- Dynamic Petals & Golden Sparkles Background Canvas -->
+    <!-- Dynamic Lightweight Petals Background Canvas -->
     <PetalsCanvas />
 
-    <!-- Ambient Glowing Light Orbs -->
-    <div class="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-purple-900/15 rounded-full blur-[140px] pointer-events-none"></div>
-    <div class="fixed bottom-10 left-10 w-[400px] h-[400px] bg-amber-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-    <div class="fixed top-1/3 right-10 w-[350px] h-[350px] bg-yellow-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+    <!-- Ambient Glowing Light Orbs (Optimized with lower blur radius) -->
+    <div class="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-900/15 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="fixed bottom-10 left-10 w-[350px] h-[350px] bg-amber-500/10 rounded-full blur-[90px] pointer-events-none"></div>
 
-    <!-- Background Audio Toggle Button (Romantic Ambient Music) -->
-    <button
-      id="musicToggleBtn"
-      class="fixed bottom-5 right-5 z-40 px-4 py-2.5 rounded-full bg-[#181232]/80 border border-amber-400/40 text-amber-200 text-xs font-medium flex items-center gap-2 backdrop-blur-md shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:scale-105 transition-all duration-300 cursor-pointer"
-      title="Música de fondo"
-    >
-      <span id="musicIcon" class="text-base">🎵</span>
-      <span id="musicStatusText">Música: Silencio</span>
-    </button>
+    <!-- ============================================== -->
+    <!-- STICKY TOP NAVBAR (Includes explicit Inicio button) -->
+    <!-- ============================================== -->
+    <header class="fixed top-0 left-0 right-0 z-40 px-4 py-3 bg-[#0c0915]/80 backdrop-blur-md border-b border-amber-400/15 transition-all duration-300">
+      <div class="max-w-6xl mx-auto flex items-center justify-between">
+        <!-- Logo / Brand -->
+        <a href="#heroCardSection" class="flex items-center gap-2 group cursor-pointer">
+          <span class="text-xl group-hover:scale-110 transition-transform">🌻</span>
+          <span class="font-serif text-amber-100 font-medium tracking-wide text-sm sm:text-base">Mi Cielito</span>
+        </a>
+
+        <!-- Navigation Links -->
+        <nav class="flex items-center gap-2 sm:gap-4">
+          <!-- Botón de Inicio explícito y visible -->
+          <a
+            id="navInicioBtn"
+            href="#heroCardSection"
+            class="px-3.5 py-1.5 rounded-full bg-amber-500/15 hover:bg-amber-500/30 text-amber-200 text-xs sm:text-sm font-medium border border-amber-400/30 transition-all duration-200 flex items-center gap-1.5 hover:scale-105"
+          >
+            <span>🏠</span>
+            <span>Inicio</span>
+          </a>
+
+          <!-- Botón Recuerdos -->
+          <button
+            id="navRecuerdosBtn"
+            class="px-3.5 py-1.5 rounded-full bg-[#1c1638]/70 hover:bg-amber-500/20 text-amber-200 text-xs sm:text-sm font-medium border border-amber-400/20 transition-all duration-200 flex items-center gap-1.5 hover:scale-105 cursor-pointer"
+          >
+            <span>📸</span>
+            <span>Recuerdos</span>
+          </button>
+
+          <!-- Botón Spotify -->
+          <button
+            id="navSpotifyBtn"
+            class="px-3.5 py-1.5 rounded-full bg-[#1db954]/20 hover:bg-[#1db954]/35 text-emerald-300 text-xs sm:text-sm font-medium border border-emerald-500/30 transition-all duration-200 flex items-center gap-1.5 hover:scale-105 shadow-[0_0_12px_rgba(29,185,84,0.3)] cursor-pointer"
+          >
+            <span class="text-sm">🟢</span>
+            <span>Spotify</span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- FLOATING ACTIONS: Spotify & Volver al Inicio -->
+    <div class="fixed bottom-5 right-5 z-40 flex flex-col gap-2.5 items-end">
+      <!-- Floating Spotify Trigger -->
+      <button
+        id="floatingSpotifyBtn"
+        class="px-4 py-2.5 rounded-full bg-[#120d24]/90 border border-emerald-500/50 text-emerald-300 text-xs font-medium flex items-center gap-2 backdrop-blur-md shadow-[0_0_20px_rgba(29,185,84,0.35)] hover:scale-105 transition-all duration-300 cursor-pointer group"
+        title="Escuchar Playlist en Spotify"
+      >
+        <span class="text-base group-hover:animate-bounce">🟢</span>
+        <span class="font-semibold">Nuestra Playlist</span>
+      </button>
+
+      <!-- Floating Volver al Inicio (Shows when scrolling down) -->
+      <button
+        id="floatingBackToTopBtn"
+        class="hidden px-3.5 py-2 rounded-full bg-amber-500/20 hover:bg-amber-500/40 text-amber-200 text-xs font-medium border border-amber-400/40 backdrop-blur-md shadow-lg transition-all duration-300 cursor-pointer items-center gap-1.5 hover:scale-105"
+        title="Volver al inicio"
+      >
+        <span>↑</span>
+        <span>Inicio</span>
+      </button>
+    </div>
 
     <!-- MAIN CONTAINER -->
-    <main class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-12 md:py-20">
+    <main class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 pt-20 pb-12">
 
       <!-- ============================================== -->
       <!-- SECTION 1: HERO DEDICATION CARD (Screenshot 1) -->
       <!-- ============================================== -->
-      <section id="heroCardSection" class="w-full max-w-md md:max-w-lg my-auto">
+      <section id="heroCardSection" class="w-full max-w-md my-auto flex flex-col items-center justify-center pt-2 pb-6">
         <div
           id="heroCard"
-          class="relative rounded-[2.5rem] p-7 md:p-10 text-center bg-[#130f26]/90 border border-amber-400/30 shadow-[0_0_50px_rgba(245,158,11,0.2)] backdrop-blur-xl transition-all duration-500 hover:shadow-[0_0_70px_rgba(245,158,11,0.35)]"
+          class="relative w-full rounded-[2.5rem] p-6 sm:p-8 text-center bg-[#130f26]/95 border border-amber-400/40 shadow-[0_0_50px_rgba(245,158,11,0.25)] backdrop-blur-xl transition-all duration-500"
         >
-          <!-- Subtle Card Inner Ambient -->
+          <!-- Subtle Card Inner Gradient -->
           <div class="absolute inset-0 rounded-[2.5rem] bg-gradient-to-b from-amber-500/5 via-transparent to-purple-500/10 pointer-events-none"></div>
 
           <!-- Title: Flores Amarillas Para Ti -->
-          <div class="relative z-10 mb-6">
-            <h1 class="font-serif text-3xl md:text-4xl text-amber-100 font-normal tracking-wide drop-shadow-[0_2px_12px_rgba(251,191,36,0.35)] leading-tight">
+          <div class="relative z-10 mb-4">
+            <h1 class="font-serif text-3xl sm:text-4xl text-amber-100 font-normal tracking-wide drop-shadow-[0_2px_12px_rgba(251,191,36,0.4)] leading-tight">
               Flores Amarillas<br />
               <span class="text-amber-200 font-medium">Para Ti</span>
             </h1>
           </div>
 
           <!-- Central Graphic: Two Sunflowers + Hugging Bears with Hearts -->
-          <div class="relative z-10 flex items-center justify-center gap-3 md:gap-5 my-6">
+          <div class="relative z-10 flex items-center justify-center gap-3 sm:gap-4 my-3">
             <!-- Left Sunflower -->
-            <div id="leftSunflower" class="transform -rotate-6 transition-transform duration-500 hover:rotate-12">
-              <SunflowerSvg className="w-12 h-12 md:w-14 md:h-14" />
+            <div id="leftSunflower" class="transform -rotate-6 transition-transform duration-500 hover:rotate-12 flex-shrink-0">
+              <SunflowerSvg className="w-11 h-11 sm:w-13 sm:h-13" />
             </div>
 
             <!-- Central Hugging Bears Sticker -->
             <div id="bearsContainer" class="relative flex flex-col items-center justify-center">
               <!-- Floating Glowing Pink Hearts over the bears -->
-              <div class="absolute -top-6 flex items-center gap-1 text-pink-400 text-lg pointer-events-none animate-bounce" style="animation-duration: 2.2s;">
-                <span class="drop-shadow-[0_0_8px_rgba(244,114,182,0.8)] text-base">💖</span>
-                <span class="drop-shadow-[0_0_10px_rgba(236,72,153,0.9)] text-xl -translate-y-1">💕</span>
-                <span class="drop-shadow-[0_0_8px_rgba(244,114,182,0.8)] text-sm">💗</span>
+              <div class="absolute -top-5 flex items-center gap-1 text-pink-400 text-lg pointer-events-none animate-bounce" style="animation-duration: 2.2s;">
+                <span class="drop-shadow-[0_0_8px_rgba(244,114,182,0.8)] text-sm">💖</span>
+                <span class="drop-shadow-[0_0_10px_rgba(236,72,153,0.9)] text-lg -translate-y-1">💕</span>
+                <span class="drop-shadow-[0_0_8px_rgba(244,114,182,0.8)] text-xs">💗</span>
               </div>
 
-              <!-- Bears Image (Using high-res sticker and fallback) -->
-              <div class="w-36 h-36 md:w-44 md:h-44 relative flex items-center justify-center overflow-hidden rounded-2xl drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
+              <!-- Bears Image (Optimized sizing so the button is always immediately visible) -->
+              <div class="w-32 h-32 sm:w-36 sm:h-36 relative flex items-center justify-center overflow-hidden rounded-2xl drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
                 <img
                   src="https://media.tenor.com/7b583vI5ZJgAAAAM/abra%C3%A7ourso.gif"
                   alt="Ositos abrazándose con cariño"
-                  class="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(254,240,138,0.25)]"
+                  class="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(254,240,138,0.25)]"
                   loading="eager"
+                  decoding="async"
                   onerror="this.onerror=null; this.src='https://c.tenor.com/7b583vI5ZJgAAAAC/abra%C3%A7ourso.gif';"
                 />
               </div>
             </div>
 
             <!-- Right Sunflower -->
-            <div id="rightSunflower" class="transform rotate-6 transition-transform duration-500 hover:-rotate-12">
-              <SunflowerSvg className="w-12 h-12 md:w-14 md:h-14" />
+            <div id="rightSunflower" class="transform rotate-6 transition-transform duration-500 hover:-rotate-12 flex-shrink-0">
+              <SunflowerSvg className="w-11 h-11 sm:w-13 sm:h-13" />
             </div>
           </div>
 
           <!-- Romantic Phrase -->
-          <div class="relative z-10 my-6">
-            <p class="font-serif text-xl md:text-2xl text-amber-50/90 tracking-wide leading-relaxed drop-shadow-sm font-normal">
+          <div class="relative z-10 my-4">
+            <p class="font-serif text-lg sm:text-xl text-amber-50/90 tracking-wide leading-snug drop-shadow-sm font-normal">
               Hoy mi universo florece en amarillo<br />
               <span class="italic text-amber-200">por ti</span>
             </p>
           </div>
 
-          <!-- Action Button: ABRIR MI REGALO -->
-          <div class="relative z-10 mt-8 mb-2">
+          <!-- ============================================== -->
+          <!-- BOTON DE INICIO / ABRIR MI REGALO (100% VISIBLE) -->
+          <!-- ============================================== -->
+          <div class="relative z-20 mt-6 mb-1">
             <button
               id="openGiftBtn"
-              class="w-full sm:w-auto px-10 py-4 rounded-full bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-amber-950 font-bold tracking-widest text-sm uppercase shadow-[0_0_30px_rgba(245,158,11,0.6)] hover:shadow-[0_0_50px_rgba(245,158,11,0.95)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 mx-auto"
+              type="button"
+              class="w-full sm:w-auto px-9 py-3.5 rounded-full bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-amber-950 font-bold tracking-widest text-sm uppercase shadow-[0_0_30px_rgba(245,158,11,0.7)] hover:shadow-[0_0_55px_rgba(245,158,11,1)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 mx-auto border border-amber-200/50"
             >
               <span>ABRIR MI REGALO</span>
-              <span class="text-base">✨</span>
+              <span class="text-base animate-pulse">✨</span>
             </button>
           </div>
         </div>
@@ -143,28 +212,40 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
       <!-- ============================================== -->
       <section
         id="memoriesSection"
-        class="w-full max-w-6xl mt-24 opacity-0 transition-opacity duration-700"
+        class="w-full max-w-6xl mt-16 transition-all duration-700"
       >
         <!-- Heartfelt Dedication Banner -->
-        <div class="text-center max-w-2xl mx-auto px-4 mb-12">
+        <div class="text-center max-w-2xl mx-auto px-4 mb-10">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs uppercase tracking-widest font-semibold mb-4">
             <span>🌻</span>
             <span>Para Mi Cielito</span>
             <span>🌻</span>
           </div>
 
-          <h2 class="font-serif text-3xl md:text-5xl text-amber-100 font-normal mb-5 leading-tight">
+          <h2 class="font-serif text-3xl md:text-5xl text-amber-100 font-normal mb-4 leading-tight">
             Cada Recuerdo Florece Contigo
           </h2>
 
-          <p class="font-romantic text-xl md:text-2xl text-amber-100/80 italic leading-relaxed">
+          <p class="font-romantic text-lg md:text-2xl text-amber-100/80 italic leading-relaxed">
             "Las flores amarillas representan la alegría, la luz incondicional y el deseo de permanecer siempre juntos. 
             Este no es solo un ramo digital: es un viaje por cada instante inolvidable que hemos compartido."
           </p>
+
+          <!-- Banner to open Spotify Playlist directly -->
+          <div class="mt-6 flex justify-center">
+            <button
+              id="bannerSpotifyBtn"
+              class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-[#1db954]/20 hover:bg-[#1db954]/30 border border-[#1db954]/40 text-emerald-300 text-xs sm:text-sm font-medium transition-all duration-300 hover:scale-105 shadow-[0_0_20px_rgba(29,185,84,0.3)] cursor-pointer"
+            >
+              <span class="text-base">🎧</span>
+              <span>Abrir reproductor de Spotify</span>
+              <span class="text-xs bg-[#1db954]/40 px-2 py-0.5 rounded-full text-white font-mono">Play</span>
+            </button>
+          </div>
         </div>
 
         <!-- Featured Circular Memory Badge (Screenshot 2) -->
-        <div class="flex flex-col items-center justify-center mb-16">
+        <div class="flex flex-col items-center justify-center mb-14">
           <div
             id="featuredBadgeTrigger"
             class="cursor-pointer"
@@ -176,7 +257,7 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
               tagline="FLORES AMARILLAS • ERES MI CIELITO • AMOR ETERNO • YOUR LIGHT BLOOMS • "
             />
           </div>
-          <p class="text-xs text-amber-300/70 tracking-widest uppercase font-medium mt-2 flex items-center gap-1.5">
+          <p class="text-xs text-amber-300/70 tracking-widest uppercase font-medium mt-1 flex items-center gap-1.5">
             <span>✦</span> Toca el círculo para ver el recuerdo destacado <span>✦</span>
           </p>
         </div>
@@ -197,34 +278,35 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
           </div>
         </div>
 
-        <!-- MEMORIES GRID -->
+        <!-- MEMORIES GRID (Optimized with lazy-loading and content-visibility) -->
         <div
           id="memoriesGrid"
           class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
         >
           {formattedMemories.map((memory) => (
             <div
-              class="memory-card group relative bg-[#151028]/80 hover:bg-[#1c1536] border border-amber-400/20 hover:border-amber-400/60 rounded-2xl overflow-hidden shadow-lg hover:shadow-[0_0_35px_rgba(245,158,11,0.25)] transition-all duration-500 hover:-translate-y-2 cursor-pointer flex flex-col justify-between"
+              class="memory-card group relative bg-[#151028]/80 hover:bg-[#1c1536] border border-amber-400/20 hover:border-amber-400/60 rounded-2xl overflow-hidden shadow-lg hover:shadow-[0_0_35px_rgba(245,158,11,0.25)] transition-all duration-300 hover:-translate-y-2 cursor-pointer flex flex-col justify-between"
               data-memory-id={memory.id}
             >
               <!-- Image Container -->
-              <div class="relative w-full aspect-[4/3] overflow-hidden bg-black/40">
+              <div class="relative w-full aspect-[4/3] overflow-hidden bg-black/50">
                 <img
                   src={memory.fullUrl}
                   alt={memory.title}
-                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
+                  decoding="async"
                 />
                 
                 <!-- Date Badge Floating -->
-                <div class="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-black/70 backdrop-blur-md text-amber-300 border border-amber-400/30 flex items-center gap-1">
+                <div class="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-black/75 backdrop-blur-md text-amber-300 border border-amber-400/30 flex items-center gap-1">
                   <span>🌻</span>
                   <span>{memory.date}</span>
                 </div>
 
                 <!-- Hover Overlay with Magnifying Icon -->
                 <div class="absolute inset-0 bg-gradient-to-t from-[#151028] via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <div class="w-12 h-12 rounded-full bg-amber-400 text-black flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform duration-300 shadow-xl font-bold">
+                  <div class="w-11 h-11 rounded-full bg-amber-400 text-black flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform duration-300 shadow-xl font-bold">
                     🔍
                   </div>
                 </div>
@@ -256,7 +338,7 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
         </div>
 
         <!-- End of Gallery Romantic Note -->
-        <div class="text-center mt-20 p-8 rounded-3xl bg-[#140e28]/70 border border-amber-400/20 backdrop-blur-sm max-w-xl mx-auto">
+        <div class="text-center mt-16 p-8 rounded-3xl bg-[#140e28]/70 border border-amber-400/20 backdrop-blur-sm max-w-xl mx-auto">
           <span class="text-3xl mb-2 inline-block">🌻💛✨</span>
           <h4 class="font-serif text-2xl text-amber-100 mb-2">Siempre a tu lado</h4>
           <p class="font-romantic text-lg text-amber-100/80 italic">
@@ -269,102 +351,69 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
     <!-- Modal Component for Detailed Photo View -->
     <Modal />
 
-    <!-- CLIENT SCRIPT WITH GSAP & INTERACTION LOGIC -->
-    <script define:vars={{ memoriesData: formattedMemories }}>
-      // Import GSAP via CDN dynamically to ensure 100% availability
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js';
-      script.onload = () => {
-        setupApp();
-      };
-      document.head.appendChild(script);
+    <!-- Dedicated Spotify Modal -->
+    <SpotifyModal />
 
-      function setupApp() {
-        const gsap = window.gsap;
+    <!-- CLIENT SCRIPT: BUNDLED GSAP & HIGH-PERFORMANCE LOGIC -->
+    <script>
+      import gsap from 'gsap';
 
-        // 1. INTRO ANIMATIONS FOR HERO CARD
+      document.addEventListener('DOMContentLoaded', () => {
+        // 1. INTRO ANIMATIONS FOR HERO CARD (GSAP)
         const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
         tl.from('#heroCard', {
-          duration: 1.2,
-          scale: 0.88,
+          duration: 0.9,
+          scale: 0.92,
           opacity: 0,
-          y: 40,
-          ease: 'back.out(1.5)',
+          y: 30,
+          ease: 'back.out(1.4)',
         })
           .from(
             '#heroCard h1',
-            {
-              duration: 0.8,
-              opacity: 0,
-              y: -20,
-            },
-            '-=0.7'
+            { duration: 0.6, opacity: 0, y: -15 },
+            '-=0.5'
           )
           .from(
             '#leftSunflower',
-            {
-              duration: 0.8,
-              scale: 0,
-              rotation: -45,
-              ease: 'back.out(2)',
-            },
-            '-=0.5'
+            { duration: 0.6, scale: 0, rotation: -30, ease: 'back.out(2)' },
+            '-=0.4'
           )
           .from(
             '#rightSunflower',
-            {
-              duration: 0.8,
-              scale: 0,
-              rotation: 45,
-              ease: 'back.out(2)',
-            },
-            '-=0.6'
-          )
-          .from(
-            '#bearsContainer',
-            {
-              duration: 0.9,
-              scale: 0.8,
-              opacity: 0,
-              ease: 'elastic.out(1, 0.75)',
-            },
-            '-=0.6'
-          )
-          .from(
-            '#heroCard p',
-            {
-              duration: 0.8,
-              opacity: 0,
-              y: 15,
-            },
+            { duration: 0.6, scale: 0, rotation: 30, ease: 'back.out(2)' },
             '-=0.5'
           )
           .from(
-            '#openGiftBtn',
-            {
-              duration: 0.9,
-              scale: 0.7,
-              opacity: 0,
-              ease: 'back.out(2)',
-            },
+            '#bearsContainer',
+            { duration: 0.7, scale: 0.85, opacity: 0, ease: 'back.out(1.2)' },
+            '-=0.5'
+          )
+          .from(
+            '#heroCard p',
+            { duration: 0.5, opacity: 0, y: 10 },
             '-=0.4'
+          )
+          .from(
+            '#openGiftBtn',
+            { duration: 0.6, scale: 0.85, opacity: 0.4, ease: 'back.out(2)' },
+            '-=0.3'
           );
 
         // Continuous subtle animation on sunflowers
         gsap.to('#leftSunflower', {
-          rotation: 8,
+          rotation: 6,
           yoyo: true,
           repeat: -1,
-          duration: 3.5,
+          duration: 3,
           ease: 'sine.inOut',
         });
 
         gsap.to('#rightSunflower', {
-          rotation: -8,
+          rotation: -6,
           yoyo: true,
           repeat: -1,
-          duration: 3.8,
+          duration: 3.2,
           ease: 'sine.inOut',
         });
 
@@ -386,41 +435,101 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
             yoyo: true,
             repeat: 1,
             onComplete: () => {
-              // Reveal memories section
               if (memoriesSection) {
-                memoriesSection.classList.remove('opacity-0');
-
-                gsap.fromTo(
-                  memoriesSection,
-                  { opacity: 0, y: 50 },
-                  { opacity: 1, y: 0, duration: 1, ease: 'power2.out' }
-                );
-
-                // Animate memory cards in stagger
-                gsap.fromTo(
-                  '.memory-card',
-                  { opacity: 0, y: 30, scale: 0.95 },
-                  {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    duration: 0.6,
-                    stagger: 0.05,
-                    ease: 'power2.out',
-                  }
-                );
-
-                // Smooth scroll to the memories
+                // Smooth scroll to memories section
                 memoriesSection.scrollIntoView({ behavior: 'smooth' });
               }
             },
           });
         });
 
-        // 3. MODAL LOGIC
+        // 3. NAVBAR & FLOATING INICIO BUTTON HANDLERS
+        const navInicioBtn = document.getElementById('navInicioBtn');
+        const navRecuerdosBtn = document.getElementById('navRecuerdosBtn');
+        const floatingBackToTopBtn = document.getElementById('floatingBackToTopBtn');
+
+        navInicioBtn?.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        navRecuerdosBtn?.addEventListener('click', () => {
+          memoriesSection?.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        floatingBackToTopBtn?.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Show/hide floating back-to-top button on scroll
+        window.addEventListener('scroll', () => {
+          if (window.scrollY > 350) {
+            floatingBackToTopBtn?.classList.remove('hidden');
+            floatingBackToTopBtn?.classList.add('flex');
+          } else {
+            floatingBackToTopBtn?.classList.add('hidden');
+            floatingBackToTopBtn?.classList.remove('flex');
+          }
+        }, { passive: true });
+
+        // 4. SPOTIFY MODAL LOGIC
+        const spotifyModal = document.getElementById('spotifyModal');
+        const spotifyModalBox = document.getElementById('spotifyModalBox');
+        const spotifyCloseBtn = document.getElementById('spotifyCloseBtn');
+        const navSpotifyBtn = document.getElementById('navSpotifyBtn');
+        const floatingSpotifyBtn = document.getElementById('floatingSpotifyBtn');
+        const bannerSpotifyBtn = document.getElementById('bannerSpotifyBtn');
+
+        function openSpotifyModal() {
+          if (spotifyModal && spotifyModalBox) {
+            spotifyModal.classList.remove('hidden');
+            spotifyModal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+
+            gsap.fromTo(
+              spotifyModal,
+              { opacity: 0 },
+              { opacity: 1, duration: 0.25 }
+            );
+
+            gsap.fromTo(
+              spotifyModalBox,
+              { scale: 0.88, opacity: 0, y: 20 },
+              { scale: 1, opacity: 1, y: 0, duration: 0.35, ease: 'back.out(1.3)' }
+            );
+          }
+        }
+
+        function closeSpotifyModal() {
+          if (spotifyModal && spotifyModalBox) {
+            gsap.to(spotifyModalBox, {
+              scale: 0.9,
+              opacity: 0,
+              y: 15,
+              duration: 0.2,
+              ease: 'power2.in',
+              onComplete: () => {
+                spotifyModal.classList.add('hidden');
+                spotifyModal.classList.remove('flex');
+                document.body.style.overflow = '';
+              },
+            });
+            gsap.to(spotifyModal, { opacity: 0, duration: 0.2 });
+          }
+        }
+
+        navSpotifyBtn?.addEventListener('click', openSpotifyModal);
+        floatingSpotifyBtn?.addEventListener('click', openSpotifyModal);
+        bannerSpotifyBtn?.addEventListener('click', openSpotifyModal);
+        spotifyCloseBtn?.addEventListener('click', closeSpotifyModal);
+        spotifyModal?.addEventListener('click', (e) => {
+          if (e.target === spotifyModal) closeSpotifyModal();
+        });
+
+        // 5. PHOTO MEMORIES MODAL LOGIC
         const modal = document.getElementById('photoModal');
         const modalBox = document.getElementById('modalBox');
-        const modalImg = document.getElementById('modalImage');
+        const modalImg = document.getElementById('modalImage') as HTMLImageElement;
         const modalTitle = document.getElementById('modalTitle');
         const modalDate = document.getElementById('modalDate');
         const modalDesc = document.getElementById('modalDescription');
@@ -433,10 +542,23 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
         const loveBtn = document.getElementById('loveBtn');
         const loveCount = document.getElementById('loveCount');
 
+        // Extract memory data from DOM
+        const cards = document.querySelectorAll('.memory-card');
+        const memoriesData: Array<{ id: number; fullUrl: string; title: string; date: string; description: string }> = [];
+
+        cards.forEach((card) => {
+          const id = Number(card.getAttribute('data-memory-id'));
+          const img = card.querySelector('img')?.src || '';
+          const title = card.querySelector('h4')?.textContent?.trim() || '';
+          const date = card.querySelector('.absolute span:last-child')?.textContent?.trim() || '';
+          const description = card.querySelector('p')?.textContent?.trim() || '';
+          memoriesData.push({ id, fullUrl: img, title, date, description });
+        });
+
         let currentMemoryIndex = 0;
         let heartLikes = 1;
 
-        function showMemory(index, direction = 0) {
+        function showMemory(index: number, direction = 0) {
           if (index < 0) index = memoriesData.length - 1;
           if (index >= memoriesData.length) index = 0;
           currentMemoryIndex = index;
@@ -444,12 +566,11 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
           const item = memoriesData[index];
           if (!item) return;
 
-          // Slide effect if direction provided
           if (direction !== 0 && modalImg) {
             gsap.fromTo(
               modalImg,
-              { opacity: 0.3, x: direction * 40, scale: 0.95 },
-              { opacity: 1, x: 0, scale: 1, duration: 0.3, ease: 'power2.out' }
+              { opacity: 0.4, x: direction * 35, scale: 0.96 },
+              { opacity: 1, x: 0, scale: 1, duration: 0.25, ease: 'power2.out' }
             );
           }
 
@@ -460,7 +581,7 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
           if (modalCounter) modalCounter.textContent = `${index + 1} / ${memoriesData.length}`;
         }
 
-        function openModal(memoryId) {
+        function openModal(memoryId: number) {
           const idx = memoriesData.findIndex((m) => m.id === memoryId);
           showMemory(idx !== -1 ? idx : 0);
 
@@ -469,16 +590,11 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
             modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
 
-            gsap.fromTo(
-              modal,
-              { opacity: 0 },
-              { opacity: 1, duration: 0.25 }
-            );
-
+            gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.25 });
             gsap.fromTo(
               modalBox,
-              { scale: 0.85, opacity: 0, y: 30 },
-              { scale: 1, opacity: 1, y: 0, duration: 0.4, ease: 'back.out(1.4)' }
+              { scale: 0.88, opacity: 0, y: 25 },
+              { scale: 1, opacity: 1, y: 0, duration: 0.35, ease: 'back.out(1.4)' }
             );
           }
         }
@@ -488,7 +604,7 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
             gsap.to(modalBox, {
               scale: 0.9,
               opacity: 0,
-              y: 20,
+              y: 15,
               duration: 0.2,
               ease: 'power2.in',
               onComplete: () => {
@@ -501,28 +617,24 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
           }
         }
 
-        // Attach click to all memory cards
-        document.querySelectorAll('.memory-card').forEach((card) => {
+        cards.forEach((card) => {
           card.addEventListener('click', () => {
             const id = Number(card.getAttribute('data-memory-id'));
             openModal(id);
           });
         });
 
-        // Featured Badge trigger
         const featuredTrigger = document.getElementById('featuredBadgeTrigger');
         featuredTrigger?.addEventListener('click', () => {
           const id = Number(featuredTrigger.getAttribute('data-memory-id'));
           openModal(id);
         });
 
-        // Close handlers
         modalCloseBtn?.addEventListener('click', closeModal);
         modal?.addEventListener('click', (e) => {
           if (e.target === modal) closeModal();
         });
 
-        // Prev / Next Handlers
         const prevHandler = () => showMemory(currentMemoryIndex - 1, -1);
         const nextHandler = () => showMemory(currentMemoryIndex + 1, 1);
 
@@ -531,54 +643,49 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
         modalPrevBtnMobile?.addEventListener('click', prevHandler);
         modalNextBtnMobile?.addEventListener('click', nextHandler);
 
-        // Keyboard navigation
         window.addEventListener('keydown', (e) => {
-          if (modal && !modal.classList.contains('hidden')) {
+          if (spotifyModal && !spotifyModal.classList.contains('hidden')) {
+            if (e.key === 'Escape') closeSpotifyModal();
+          } else if (modal && !modal.classList.contains('hidden')) {
             if (e.key === 'Escape') closeModal();
             if (e.key === 'ArrowLeft') prevHandler();
             if (e.key === 'ArrowRight') nextHandler();
           }
         });
 
-        // Love reaction button with floating hearts
         loveBtn?.addEventListener('click', () => {
           heartLikes++;
           if (loveCount) loveCount.textContent = String(heartLikes);
-
-          // Animate button bounce
           gsap.to(loveBtn, { scale: 1.15, duration: 0.15, yoyo: true, repeat: 1 });
-
-          // Spawn floating heart
           spawnFloatingHeart(loveBtn);
         });
 
-        function spawnFloatingHeart(parentEl) {
+        function spawnFloatingHeart(parentEl: HTMLElement) {
           const heart = document.createElement('div');
           heart.textContent = '❤️';
-          heart.className = 'fixed pointer-events-none text-2xl z-50';
+          heart.className = 'fixed pointer-events-none text-2xl z-50 select-none';
           const rect = parentEl.getBoundingClientRect();
           heart.style.left = `${rect.left + rect.width / 2}px`;
           heart.style.top = `${rect.top}px`;
           document.body.appendChild(heart);
 
           gsap.to(heart, {
-            y: -80 - Math.random() * 50,
-            x: (Math.random() - 0.5) * 60,
+            y: -70 - Math.random() * 40,
+            x: (Math.random() - 0.5) * 50,
             opacity: 0,
-            scale: 1.5,
-            duration: 1.2,
+            scale: 1.4,
+            duration: 1.1,
             ease: 'power2.out',
             onComplete: () => heart.remove(),
           });
         }
 
-        // Confetti burst function
         function spawnConfetti() {
           const colors = ['#fde047', '#facc15', '#f59e0b', '#fb7185', '#ffffff'];
-          for (let i = 0; i < 40; i++) {
+          for (let i = 0; i < 30; i++) {
             const el = document.createElement('div');
             el.className = 'fixed pointer-events-none z-50 rounded-full';
-            const size = Math.random() * 8 + 4;
+            const size = Math.random() * 7 + 4;
             el.style.width = `${size}px`;
             el.style.height = `${size}px`;
             el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
@@ -587,93 +694,43 @@ const featuredMemory = formattedMemories.find((m) => m.featured) || formattedMem
             document.body.appendChild(el);
 
             const angle = Math.random() * Math.PI * 2;
-            const distance = Math.random() * 220 + 80;
+            const distance = Math.random() * 180 + 70;
 
             gsap.to(el, {
               x: Math.cos(angle) * distance,
               y: Math.sin(angle) * distance,
               opacity: 0,
-              scale: Math.random() * 1.5 + 0.5,
-              duration: Math.random() * 1.2 + 0.8,
+              scale: Math.random() * 1.3 + 0.6,
+              duration: Math.random() * 1 + 0.7,
               ease: 'power2.out',
               onComplete: () => el.remove(),
             });
           }
         }
 
-        // Web Audio API Ambient Music Synth
-        let audioCtx = null;
-        let isPlayingMusic = false;
-        let musicInterval = null;
-
         function playCelebrationSound() {
           try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6 (Bright cheerful chord)
+            const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+            if (!AudioContextClass) return;
+            const ctx = new AudioContextClass();
+            const notes = [523.25, 659.25, 783.99, 1046.5];
             notes.forEach((freq, idx) => {
               const osc = ctx.createOscillator();
               const gain = ctx.createGain();
               osc.type = 'sine';
               osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.08);
-              gain.gain.setValueAtTime(0.12, ctx.currentTime + idx * 0.08);
-              gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + idx * 0.08 + 1.2);
+              gain.gain.setValueAtTime(0.1, ctx.currentTime + idx * 0.08);
+              gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + idx * 0.08 + 1.1);
               osc.connect(gain);
               gain.connect(ctx.destination);
               osc.start(ctx.currentTime + idx * 0.08);
-              osc.stop(ctx.currentTime + idx * 0.08 + 1.2);
+              osc.stop(ctx.currentTime + idx * 0.08 + 1.1);
             });
           } catch (e) {
             // Audio policy fallback
           }
         }
-
-        const musicToggleBtn = document.getElementById('musicToggleBtn');
-        const musicIcon = document.getElementById('musicIcon');
-        const musicStatusText = document.getElementById('musicStatusText');
-
-        function toggleMusic() {
-          if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-          }
-
-          if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-          }
-
-          if (!isPlayingMusic) {
-            isPlayingMusic = true;
-            if (musicIcon) musicIcon.textContent = '🎶';
-            if (musicStatusText) musicStatusText.textContent = 'Música: Sonando';
-            musicToggleBtn?.classList.add('border-amber-400', 'shadow-[0_0_25px_rgba(245,158,11,0.6)]');
-
-            // Play gentle repeating romantic piano chime sequence
-            const melody = [392, 440, 523.25, 587.33, 659.25, 587.33, 523.25, 440];
-            let noteIdx = 0;
-            musicInterval = window.setInterval(() => {
-              if (!isPlayingMusic || !audioCtx) return;
-              const osc = audioCtx.createOscillator();
-              const gain = audioCtx.createGain();
-              osc.type = 'triangle';
-              osc.frequency.setValueAtTime(melody[noteIdx % melody.length], audioCtx.currentTime);
-              gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
-              gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.6);
-              osc.connect(gain);
-              gain.connect(audioCtx.destination);
-              osc.start();
-              osc.stop(audioCtx.currentTime + 1.6);
-              noteIdx++;
-            }, 800);
-          } else {
-            isPlayingMusic = false;
-            if (musicInterval) clearInterval(musicInterval);
-            if (musicIcon) musicIcon.textContent = '🎵';
-            if (musicStatusText) musicStatusText.textContent = 'Música: Silencio';
-            musicToggleBtn?.classList.remove('border-amber-400', 'shadow-[0_0_25px_rgba(245,158,11,0.6)]');
-          }
-        }
-
-        musicToggleBtn?.addEventListener('click', toggleMusic);
-      }
+      });
     </script>
   </body>
 </html>

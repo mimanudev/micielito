@@ -1,22 +1,26 @@
 ---
-// Canvas flotante de pétalos de flores amarillas y destellos dorados
+// Canvas optimizado de pétalos de flores amarillas y destellos dorados
 ---
 
-<canvas id="petalsCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-80"></canvas>
+<canvas id="petalsCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-75"></canvas>
 
 <script>
   function initPetals() {
     const canvas = document.getElementById('petalsCanvas') as HTMLCanvasElement;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
+    let resizeTimeout: any;
     window.addEventListener('resize', () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }, 150);
     });
 
     interface Particle {
@@ -35,27 +39,27 @@
     }
 
     const yellowColors = [
-      '#fef08a', // light yellow
-      '#fde047', // vivid yellow
-      '#facc15', // warm yellow
-      '#eab308', // amber
-      '#f59e0b', // golden amber
+      '#fef08a',
+      '#fde047',
+      '#facc15',
+      '#f59e0b',
     ];
 
     const particles: Particle[] = [];
-    const count = window.innerWidth < 768 ? 35 : 65;
+    const isMobile = window.innerWidth < 768;
+    const count = isMobile ? 18 : 32; // Optimized count for 60fps performance
 
     for (let i = 0; i < count; i++) {
-      const isSparkle = Math.random() > 0.45;
+      const isSparkle = Math.random() > 0.5;
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        size: isSparkle ? Math.random() * 2.5 + 1 : Math.random() * 9 + 6,
-        speedX: Math.random() * 0.8 - 0.4,
-        speedY: isSparkle ? Math.random() * 0.4 - 0.6 : Math.random() * 0.8 + 0.6, // sparkles float up, petals fall down
+        size: isSparkle ? Math.random() * 2 + 1 : Math.random() * 7 + 5,
+        speedX: (Math.random() - 0.5) * 0.6,
+        speedY: isSparkle ? -(Math.random() * 0.5 + 0.3) : Math.random() * 0.7 + 0.5,
         rotation: Math.random() * Math.PI * 2,
-        rotationSpeed: (Math.random() - 0.5) * 0.03,
-        opacity: Math.random() * 0.6 + 0.3,
+        rotationSpeed: (Math.random() - 0.5) * 0.02,
+        opacity: Math.random() * 0.5 + 0.3,
         color: yellowColors[Math.floor(Math.random() * yellowColors.length)],
         isSparkle,
         oscillation: Math.random() * Math.PI * 2,
@@ -63,29 +67,31 @@
       });
     }
 
-    function drawPetal(ctx: CanvasRenderingContext2D, p: Particle) {
+    let isRunning = true;
+    document.addEventListener('visibilitychange', () => {
+      isRunning = !document.hidden;
+      if (isRunning) requestAnimationFrame(animate);
+    });
+
+    function drawPetal(p: Particle) {
+      if (!ctx) return;
       ctx.save();
       ctx.translate(p.x, p.y);
       ctx.rotate(p.rotation);
       ctx.globalAlpha = p.opacity;
+      ctx.fillStyle = p.color;
 
       if (p.isSparkle) {
-        // Glowing star sparkle
-        ctx.fillStyle = p.color;
-        ctx.shadowColor = '#fbbf24';
-        ctx.shadowBlur = 8;
+        // Fast, high-perf sparkle without shadowBlur
         ctx.beginPath();
         ctx.arc(0, 0, p.size, 0, Math.PI * 2);
         ctx.fill();
       } else {
         // Organic flower petal shape
-        ctx.fillStyle = p.color;
-        ctx.shadowColor = 'rgba(245, 158, 11, 0.4)';
-        ctx.shadowBlur = 6;
         ctx.beginPath();
         ctx.moveTo(0, -p.size);
-        ctx.quadraticCurveTo(p.size * 0.7, -p.size * 0.3, 0, p.size);
-        ctx.quadraticCurveTo(-p.size * 0.7, -p.size * 0.3, 0, -p.size);
+        ctx.quadraticCurveTo(p.size * 0.6, -p.size * 0.2, 0, p.size);
+        ctx.quadraticCurveTo(-p.size * 0.6, -p.size * 0.2, 0, -p.size);
         ctx.fill();
       }
 
@@ -93,16 +99,16 @@
     }
 
     function animate() {
-      if (!ctx) return;
+      if (!isRunning || !ctx) return;
       ctx.clearRect(0, 0, width, height);
 
-      particles.forEach((p) => {
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
         p.oscillation += p.oscillationSpeed;
-        p.x += p.speedX + Math.sin(p.oscillation) * 0.5;
+        p.x += p.speedX + Math.sin(p.oscillation) * 0.4;
         p.y += p.speedY;
         p.rotation += p.rotationSpeed;
 
-        // Wrap around screen
         if (p.y > height + 20) {
           p.y = -20;
           p.x = Math.random() * width;
@@ -114,8 +120,8 @@
         if (p.x > width + 20) p.x = -20;
         if (p.x < -20) p.x = width + 20;
 
-        drawPetal(ctx, p);
-      });
+        drawPetal(p);
+      }
 
       requestAnimationFrame(animate);
     }
@@ -123,7 +129,6 @@
     animate();
   }
 
-  // Run on mount
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initPetals);
   } else {
