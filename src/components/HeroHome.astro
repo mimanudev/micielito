@@ -1,0 +1,729 @@
+---
+const rawBase = import.meta.env.BASE_URL || "/";
+const baseUrl = rawBase.endsWith("/") ? rawBase.slice(0, -1) : rawBase;
+import SunflowerSvg from "./SunflowerSvg.astro";
+---
+
+<section
+    id="heroCardSection"
+    class="invitation hero-invitation-section w-full flex justify-center"
+    data-state="idle"
+>
+    <div id="invitationScene" class="hero-invitation-scene">
+        <div class="hero-float">
+            <div id="invitationTilt" class="hero-tilt">
+                <div id="invitationEnvelope" class="hero-envelope">
+                    <div class="hero-envelope-back"></div>
+
+                    <article
+                        id="heroCard"
+                        class="hero-letter"
+                        inert
+                        aria-hidden="true"
+                        aria-label="Invitación"
+                    >
+                        <div class="hero-letter-glow"></div>
+                        <div class="hero-letter-content">
+                            <p class="hero-eyebrow">Una invitación para ti</p>
+                            <h1>Flores Amarillas<br /><span>Para Ti</span></h1>
+
+                            <div class="hero-illustration">
+                                <div class="hero-flower hero-flower-left">
+                                    <SunflowerSvg
+                                        className="w-11 h-11 sm:w-14 sm:h-14"
+                                    />
+                                </div>
+                                <div class="hero-bears">
+                                    <img
+                                        src={`${baseUrl}/images/compressed/inicio.webp`}
+                                        alt="Ositos abrazándose con cariño"
+                                        width="288"
+                                        height="288"
+                                        loading="eager"
+                                        fetchpriority="high"
+                                        decoding="async"
+                                    />
+                                </div>
+                                <div class="hero-flower hero-flower-right">
+                                    <SunflowerSvg
+                                        className="w-11 h-11 sm:w-14 sm:h-14"
+                                    />
+                                </div>
+                            </div>
+
+                            <p class="hero-message">
+                                Nuestra historia de amor<br /><em
+                                    >gracias por existir</em>
+                            </p>
+                            <a href={`${baseUrl}/recuerdos/`} class="hero-cta"
+                                >ABRE RECUERDOS <span>✦</span></a
+                            >
+                        </div>
+                    </article>
+
+                    <div id="envelopeFront" class="hero-envelope-front"></div>
+                    <div
+                        id="envelopeFlap"
+                        class="hero-envelope-flap"
+                        aria-hidden="true"
+                    >
+                        <div class="hero-flap-inner"></div>
+                    </div>
+                    <button
+                        id="envelopeSeal"
+                        class="hero-envelope-seal"
+                        type="button"
+                        aria-label="Abrir el sobre"
+                        ><span>M<i>♥</i>M</span></button
+                    >
+                    <div id="envelopeAddress" class="hero-envelope-address">
+                        <div><span>De</span><strong>Manuel</strong></div>
+                        <span class="hero-address-heart">♥</span>
+                        <div><span>Para</span><strong>Moni</strong></div>
+                        <p>Con todo el corazón</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p id="envelopeHint" class="hero-envelope-hint">
+            Toca el sello para abrir
+        </p>
+        <p id="envelopeStatus" class="sr-only" role="status" aria-live="polite">
+        </p>
+    </div>
+</section>
+
+<script>
+    import gsap from "gsap";
+
+    const root = document.getElementById("heroCardSection");
+    const scene = document.getElementById("invitationScene");
+    const tilt = document.getElementById("invitationTilt");
+    const envelope = document.getElementById("invitationEnvelope");
+    const flap = document.getElementById("envelopeFlap");
+    const front = document.getElementById("envelopeFront");
+    const seal = document.getElementById("envelopeSeal");
+    const address = document.getElementById("envelopeAddress");
+    const letter = document.getElementById("heroCard");
+    const hint = document.getElementById("envelopeHint");
+    const status = document.getElementById("envelopeStatus");
+    const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+    ).matches;
+    let state = "idle";
+
+    // Recorta la parte de la carta que sobresale por debajo del sobre
+    const syncLetterClip = () => {
+        if (!letter || !front) return;
+        const y = Number(gsap.getProperty(letter, "y"));
+        const s = Number(gsap.getProperty(letter, "scale")) || 1;
+        const h = letter.offsetHeight;
+        const letterBottom = letter.offsetTop + y + h / 2 + (h * s) / 2;
+        const pocketBottom =
+            front.offsetTop +
+            front.offsetHeight +
+            Number(gsap.getProperty(front, "y")) -
+            2;
+        const overflow = (letterBottom - pocketBottom) / s;
+
+        // Los márgenes negativos dejan intactas la sombra y el brillo de los otros lados
+        letter.style.clipPath =
+            overflow > 0.5
+                ? `inset(-80px -80px ${overflow.toFixed(1)}px -80px)`
+                : "";
+    };
+
+    const openEnvelope = () => {
+        if (state !== "idle") return;
+        state = "opening";
+        [letter, flap, front, seal, address].forEach((el) => {
+            if (el) el.style.transition = "none";
+        });
+        root?.setAttribute("data-state", state);
+        if (status) status.textContent = "Sobre abierto";
+        envelope?.classList.add("is-opening");
+        flap?.classList.add("is-opening");
+        front?.classList.add("is-opening");
+        seal?.classList.add("is-opening");
+        address?.classList.add("is-opening");
+        letter?.classList.add("is-revealed");
+
+        if (letter) letter.style.animation = "none";
+
+        const timeline = gsap.timeline({
+            defaults: { ease: "power3.out" },
+            onUpdate: syncLetterClip,
+            onComplete: () => {
+                if (letter) letter.style.clipPath = "";
+                state = "opened";
+                root?.setAttribute("data-state", state);
+                envelope?.classList.add("is-opened");
+                letter?.removeAttribute("inert");
+                letter?.removeAttribute("aria-hidden");
+                if (status) status.textContent = "Carta lista";
+            },
+        });
+
+        timeline
+            // La carta permanece debajo del frente mientras sube hasta el borde.
+            .set(letter, { zIndex: 3, opacity: 1, y: 310, scale: 0.96 })
+            .to(
+                flap,
+                { rotateX: 180, duration: 1.15, ease: "power2.inOut" },
+                0.1,
+            )
+            .to(
+                seal,
+                {
+                    opacity: 0,
+                    scale: 0.72,
+                    duration: 0.4,
+                    ease: "back.in(1.4)",
+                },
+                0,
+            )
+            .to(address, { opacity: 0, y: 24, duration: 0.45 }, 0.15)
+            .to(
+                letter,
+                { y: 238, scale: 0.975, duration: 1.4, ease: "power2.out" },
+                0.35,
+            )
+            .to(
+                front,
+                {
+                    clipPath:
+                        "polygon(0 54%, 50% 64%, 100% 54%, 100% 100%, 0 100%)",
+                    y: 18,
+                    duration: 3.1,
+                    ease: "power2.inOut",
+                },
+                0.35,
+            )
+            .to(letter, {
+                y: 105,
+                scale: 0.99,
+                duration: 1.15,
+                ease: "power2.inOut",
+            })
+            .to(letter, { y: -30, scale: 1, duration: 1.6, ease: "power3.out" })
+            // Solo cuando la carta ya salió, queda por encima del sobre completo.
+            .set(letter, { zIndex: 10 })
+            .to(letter, { y: -68, duration: 0.6, ease: "back.out(1.35)" })
+            .to(letter, { y: -62, duration: 0.5, ease: "sine.out" });
+
+        timeline.play(0);
+    };
+
+    seal?.addEventListener("click", openEnvelope);
+    // La apertura queda bajo control de la persona: el sobre no se abre solo.
+
+    if (
+        !reduceMotion &&
+        window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+        scene &&
+        tilt
+    ) {
+        let frame = 0;
+        let targetX = 0;
+        let targetY = 0;
+        let currentX = 0;
+        let currentY = 0;
+        const animateTilt = () => {
+            currentX += (targetX - currentX) * 0.08;
+            currentY += (targetY - currentY) * 0.08;
+            tilt.style.transform = `rotateX(${(-currentY * 5).toFixed(2)}deg) rotateY(${(currentX * 7).toFixed(2)}deg)`;
+            frame =
+                Math.abs(targetX - currentX) < 0.001 &&
+                Math.abs(targetY - currentY) < 0.001
+                    ? 0
+                    : requestAnimationFrame(animateTilt);
+        };
+        scene.addEventListener(
+            "pointermove",
+            (event) => {
+                const pointer = event as PointerEvent;
+                const bounds = scene.getBoundingClientRect();
+                targetX = Math.max(
+                    -1,
+                    Math.min(
+                        1,
+                        ((pointer.clientX - bounds.left) / bounds.width) * 2 -
+                            1,
+                    ),
+                );
+                targetY = Math.max(
+                    -1,
+                    Math.min(
+                        1,
+                        ((pointer.clientY - bounds.top) / bounds.height) * 2 -
+                            1,
+                    ),
+                );
+                if (!frame) frame = requestAnimationFrame(animateTilt);
+            },
+            { passive: true },
+        );
+        scene.addEventListener("pointerleave", () => {
+            targetX = 0;
+            targetY = 0;
+            if (!frame) frame = requestAnimationFrame(animateTilt);
+        });
+    }
+</script>
+
+<style>
+    .hero-tilt {
+        position: relative;
+        transform-style: preserve-3d;
+        will-change: transform;
+    }
+
+    .hero-float {
+        animation: hero-float 6s ease-in-out 1.1s infinite;
+    }
+
+    .hero-envelope-hint {
+        margin: -2.2rem 0 0;
+        color: rgba(252, 211, 77, 0.85);
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.15rem;
+        font-style: italic;
+        text-align: center;
+        transition: opacity 0.3s ease;
+    }
+
+    .invitation:not([data-state="idle"]) .hero-envelope-hint {
+        opacity: 0;
+    }
+
+    .hero-envelope-seal {
+        appearance: none;
+        cursor: pointer;
+    }
+
+    .hero-envelope-seal span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.05em;
+        font-family: "Playfair Display", serif;
+        font-size: 1.05rem;
+        font-weight: 600;
+    }
+
+    .hero-envelope-seal i {
+        color: #ffe9a8;
+        font-size: 0.7em;
+        font-style: normal;
+    }
+
+    .hero-envelope-seal:focus-visible {
+        outline: 5px solid #fde68a;
+        outline-offset: 4px;
+    }
+
+    .hero-flap-inner {
+        width: 100%;
+        height: 100%;
+        clip-path: polygon(0 0, 100% 0, 50% 100%);
+        background: linear-gradient(
+            160deg,
+            #a23361 0%,
+            #6a2049 55%,
+            #3d1739 100%
+        );
+    }
+
+    .hero-envelope.is-opening .hero-envelope-flap {
+        z-index: 10;
+        
+    }
+
+    .hero-envelope.is-opened .hero-envelope-front {
+        opacity: 1;
+        transform: translateY(18px);
+    }
+    .hero-envelope.is-opened .hero-envelope-front {
+        opacity: 1;
+        transform: translateY(18px);
+        clip-path: polygon(0 54%, 50% 64%, 100% 54%, 100% 100%, 0 100%);
+    }
+
+    .hero-letter-content > * {
+        opacity: 1;
+        transform: none;
+    }
+
+    @keyframes hero-float {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-0.45rem);
+        }
+    }
+
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+    }
+
+    .hero-invitation-section {
+        min-height: 820px;
+        align-items: flex-start;
+    }
+
+    .hero-invitation-scene {
+        width: min(100%, 560px);
+        perspective: 1400px;
+    }
+
+    .hero-envelope {
+        position: relative;
+        width: 100%;
+        height: 790px;
+        isolation: isolate;
+    }
+
+    .hero-envelope-back,
+    .hero-envelope-front {
+        position: absolute;
+        right: 0;
+        bottom: 42px;
+        left: 0;
+        height: 570px;
+        border: 1px solid rgba(245, 190, 66, 0.65);
+        border-radius: 22px 22px 30px 30px;
+        background: linear-gradient(
+            155deg,
+            #6d1e47 0%,
+            #431936 56%,
+            #2b142d 100%
+        );
+        box-shadow:
+            0 30px 70px rgba(0, 0, 0, 0.48),
+            inset 0 1px rgba(255, 230, 145, 0.2);
+    }
+
+    .hero-envelope-back {
+        z-index: 1;
+        transform: translateY(8px);
+    }
+
+    .hero-envelope-front {
+        z-index: 5;
+        clip-path: polygon(0 0, 50% 51%, 100% 0, 100% 100%, 0 100%);
+        transition:
+            opacity 0.65s ease,
+            transform 0.65s ease;
+    }
+
+    .hero-envelope-flap {
+        position: absolute;
+        z-index: 7;
+        top: 178px;
+        right: 0;
+        left: 0;
+        height: 319px;
+        transform-origin: top center;
+        clip-path: polygon(0 0, 100% 0, 50% 100%);
+        border: 1px solid rgba(245, 190, 66, 0.6);
+        background: linear-gradient(145deg, #8f2c55, #571b45 62%, #3a1638);
+        backface-visibility: hidden;
+        transition:
+            transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1),
+            opacity 0.4s ease;
+    }
+
+    .hero-letter {
+        position: absolute;
+        z-index: 3;
+        top: 178px;
+        left: 6%;
+        width: 88%;
+        min-height: 570px;
+        margin: 0;
+        padding: 30px 26px;
+        overflow: hidden;
+        border: 1px solid rgba(245, 190, 66, 0.55);
+        border-radius: 24px;
+        background: linear-gradient(
+            155deg,
+            #18132d 0%,
+            #130e26 70%,
+            #211334 100%
+        );
+        box-shadow:
+            0 18px 45px rgba(0, 0, 0, 0.42),
+            0 0 35px rgba(245, 158, 11, 0.14);
+        opacity: 0;
+        transform: translateY(310px) scale(0.96);
+        transition:
+            transform 1.8s cubic-bezier(0.16, 1, 0.3, 1),
+            opacity 0.9s ease;
+    }
+
+    .hero-letter-glow {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            150deg,
+            rgba(245, 158, 11, 0.12),
+            transparent 42%,
+            rgba(126, 34, 206, 0.1)
+        );
+        pointer-events: none;
+    }
+
+    .hero-letter-content {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+    }
+
+    .hero-eyebrow {
+        margin: 0 0 12px;
+        color: rgba(252, 211, 77, 0.72);
+        font-family: "Cinzel", serif;
+        font-size: 0.62rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+    }
+
+    .hero-letter h1 {
+        margin: 0;
+        color: #fff1c2;
+        font-family: "Playfair Display", serif;
+        font-size: clamp(2rem, 7vw, 2.8rem);
+        font-weight: 600;
+        line-height: 1.1;
+        text-shadow: 0 2px 14px rgba(251, 191, 36, 0.32);
+    }
+
+    .hero-letter h1 span {
+        color: #fde68a;
+    }
+
+    .hero-illustration {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        margin: 22px auto 14px;
+    }
+
+    .hero-flower {
+        flex: 0 0 auto;
+    }
+
+    .hero-flower-left {
+        animation: hero-sway-left 3s ease-in-out infinite;
+    }
+    .hero-flower-right {
+        animation: hero-sway-right 3.2s ease-in-out infinite;
+    }
+
+    .hero-bears {
+        width: 152px;
+        height: 152px;
+    }
+
+    .hero-bears img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.5));
+    }
+
+    .hero-message {
+        margin: 10px 0 26px;
+        color: rgba(255, 247, 237, 0.92);
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.28rem;
+        line-height: 1.15;
+    }
+
+    .hero-message em {
+        color: #fde68a;
+        font-weight: 600;
+    }
+
+    .hero-cta {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        width: 100%;
+        padding: 15px 18px;
+        border: 1px solid rgba(255, 236, 153, 0.65);
+        border-radius: 999px;
+        background: linear-gradient(100deg, #fcd34d, #fff0a3, #f59e0b);
+        box-shadow: 0 0 28px rgba(245, 158, 11, 0.48);
+        color: #451a03;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-decoration: none;
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
+    }
+
+    .hero-cta:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0 42px rgba(245, 158, 11, 0.78);
+    }
+
+    .hero-envelope-seal {
+        position: absolute;
+        z-index: 9;
+        top: 480px;
+        left: 50%;
+        display: grid;
+        width: 48px;
+        height: 48px;
+        transform: translateX(-50%);
+        place-items: center;
+        border: 2px solid #ffe28a;
+        border-radius: 50%;
+        background: #c53058;
+        color: #fff1b3;
+        box-shadow: 0 0 22px rgba(244, 63, 94, 0.5);
+        transition:
+            opacity 0.35s ease,
+            transform 0.5s ease;
+    }
+
+    .hero-envelope-address {
+        position: absolute;
+        z-index: 8;
+        right: 0;
+        bottom: 75px;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        color: #fff1b3;
+        text-align: left;
+        transition:
+            opacity 0.45s ease,
+            transform 0.45s ease;
+    }
+
+    .hero-envelope-address div {
+        display: flex;
+        flex-direction: column;
+    }
+    .hero-envelope-address span:not(.hero-address-heart) {
+        color: rgba(255, 225, 145, 0.7);
+        font-family: "Cinzel", serif;
+        font-size: 0.55rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+    }
+    .hero-envelope-address strong {
+        font-family: "Playfair Display", serif;
+        font-size: 1.2rem;
+    }
+    .hero-address-heart {
+        color: #ffd86a;
+    }
+    .hero-envelope-address p {
+        position: absolute;
+        top: 42px;
+        margin: 0;
+        color: rgba(255, 241, 179, 0.84);
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1rem;
+        font-style: italic;
+    }
+
+    .hero-envelope.is-opened .hero-envelope-front {
+        opacity: 1;
+    }
+    .hero-envelope.is-opened .hero-letter.is-revealed {
+        z-index: 10;
+        opacity: 1;
+        transform: translateY(-65px) scale(1);
+    }
+
+    @keyframes hero-sway-left {
+        0%,
+        100% {
+            transform: rotate(-7deg);
+        }
+        50% {
+            transform: rotate(7deg);
+        }
+    }
+    @keyframes hero-sway-right {
+        0%,
+        100% {
+            transform: rotate(7deg);
+        }
+        50% {
+            transform: rotate(-7deg);
+        }
+    }
+
+    @media (max-width: 640px) {
+        .hero-invitation-section {
+            min-height: 730px;
+        }
+        .hero-envelope {
+            height: 700px;
+        }
+        .hero-envelope-back,
+        .hero-envelope-front {
+            height: 530px;
+            bottom: 25px;
+        }
+        .hero-envelope-flap {
+            top: 145px;
+            height: 297px;
+        }
+        .hero-letter {
+            top: 145px;
+            min-height: 530px;
+            padding: 25px 18px;
+        }
+        .hero-bears {
+            width: 128px;
+            height: 128px;
+        }
+        .hero-envelope-seal {
+            top: 426px;
+        }
+        .hero-envelope-address {
+            bottom: 55px;
+        }
+        .hero-envelope.is-opened .hero-letter.is-revealed {
+            transform: translateY(-45px) scale(1);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .hero-float,
+        .hero-flower-left,
+        .hero-flower-right {
+            animation: none;
+        }
+        .hero-envelope-flap,
+        .hero-envelope-front,
+        .hero-envelope-seal,
+        .hero-envelope-address,
+        .hero-letter {
+            transition: none;
+        }
+        .hero-envelope.is-opened .hero-letter.is-revealed {
+            opacity: 1;
+            transform: translateY(-65px);
+        }
+    }
+</style>

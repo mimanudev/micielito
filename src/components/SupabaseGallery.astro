@@ -1,0 +1,174 @@
+---
+import galleryImages from '../data/supabase-gallery.json';
+
+const columns = [
+  galleryImages.filter((_, index) => index % 4 === 0),
+  galleryImages.filter((_, index) => index % 4 === 1),
+  galleryImages.filter((_, index) => index % 4 === 2),
+  galleryImages.filter((_, index) => index % 4 === 3),
+];
+---
+
+<section id="photoGallerySection" class="w-full max-w-6xl mt-20 scroll-mt-24" style="content-visibility: auto; contain-intrinsic-size: 1100px;" aria-labelledby="photoGalleryTitle">
+  <div class="max-w-2xl mx-auto text-center mb-10 px-4">
+    <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/15 border border-rose-300/25 text-rose-200 text-xs uppercase tracking-[0.22em] font-semibold">
+      <span>✦</span>
+      <span>Instantes que guardamos</span>
+      <span>✦</span>
+    </span>
+    <h2 id="photoGalleryTitle" class="font-serif text-3xl md:text-5xl text-amber-100 mt-5 mb-3">
+      Un álbum para volver
+    </h2>
+    <p class="font-romantic text-lg md:text-2xl text-amber-100/75 italic leading-relaxed">
+      Cada foto tiene una forma distinta de decir: qué bonito coincidir contigo.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5" aria-label="Galería de fotos">
+    {columns.map((column) => (
+      <div class="grid gap-3 md:gap-5 content-start">
+        {column.map((image) => (
+          <button
+            type="button"
+            data-gallery-index={galleryImages.indexOf(image)}
+            class="gallery-tile group relative block overflow-hidden rounded-2xl border border-amber-200/20 bg-[#151028]/80 shadow-lg shadow-black/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+            aria-label={`Ver foto: ${image.title}`}
+          >
+            <img
+              src={image.url}
+              alt={image.alt}
+              width={image.width}
+              height={image.height}
+              class="h-auto w-full object-cover transition duration-700 ease-out group-hover:scale-105 group-hover:brightness-110"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-black/85 via-black/55 to-transparent px-3 pb-3 pt-10 text-sm text-amber-50 transition-transform duration-300 group-hover:translate-y-0 group-focus-visible:translate-y-0">
+              {image.title}
+            </span>
+          </button>
+        ))}
+      </div>
+    ))}
+  </div>
+
+  <p class="text-center text-xs text-amber-200/45 mt-6">
+    Toca una foto para verla en tamaño completo y recorrer el álbum.
+  </p>
+</section>
+
+<div
+  id="supabaseGalleryModal"
+  class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/90 p-3 backdrop-blur-md sm:p-6"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="supabaseGalleryModalTitle"
+>
+  <div class="relative flex max-h-[94vh] w-full max-w-5xl flex-col items-center justify-center">
+    <button
+      id="supabaseGalleryClose"
+      type="button"
+      class="absolute right-0 top-0 z-20 flex h-10 w-10 translate-y-[-3.5rem] items-center justify-center rounded-full border border-amber-300/40 bg-black/60 text-2xl text-amber-100 transition hover:bg-amber-400 hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+      aria-label="Cerrar galería"
+    >
+      ×
+    </button>
+
+    <div class="relative flex w-full items-center justify-center">
+      <button
+        id="supabaseGalleryPrevious"
+        type="button"
+        class="absolute left-0 z-10 flex h-11 w-11 -translate-x-1/2 items-center justify-center rounded-full border border-amber-300/40 bg-black/65 text-2xl text-amber-100 transition hover:bg-amber-400 hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 sm:left-2 sm:translate-x-0"
+        aria-label="Foto anterior"
+      >
+        ‹
+      </button>
+
+      <img
+        id="supabaseGalleryModalImage"
+        src=""
+        alt=""
+        class="max-h-[78vh] max-w-[calc(100%-4rem)] rounded-xl object-contain shadow-[0_0_60px_rgba(245,158,11,0.2)]"
+      />
+
+      <button
+        id="supabaseGalleryNext"
+        type="button"
+        class="absolute right-0 z-10 flex h-11 w-11 translate-x-1/2 items-center justify-center rounded-full border border-amber-300/40 bg-black/65 text-2xl text-amber-100 transition hover:bg-amber-400 hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 sm:right-2 sm:translate-x-0"
+        aria-label="Foto siguiente"
+      >
+        ›
+      </button>
+    </div>
+
+    <div class="mt-4 text-center">
+      <h3 id="supabaseGalleryModalTitle" class="font-serif text-xl text-amber-100"></h3>
+      <p id="supabaseGalleryModalCounter" class="mt-1 text-xs tracking-widest text-amber-200/60"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const galleryImages = document.querySelectorAll<HTMLButtonElement>('[data-gallery-index]');
+  const galleryModal = document.getElementById('supabaseGalleryModal');
+  const galleryModalImage = document.getElementById('supabaseGalleryModalImage') as HTMLImageElement | null;
+  const galleryModalTitle = document.getElementById('supabaseGalleryModalTitle');
+  const galleryModalCounter = document.getElementById('supabaseGalleryModalCounter');
+  const galleryClose = document.getElementById('supabaseGalleryClose');
+  const galleryPrevious = document.getElementById('supabaseGalleryPrevious');
+  const galleryNext = document.getElementById('supabaseGalleryNext');
+
+  // Fix: galleryImages en el DOM está ordenado por columnas (0,4,8,1,5,9...), no por índice original.
+  // Si usamos el array en orden DOM y luego buscamos por data-gallery-index (índice original),
+  // al hacer clic en la foto 1 se abre la foto 4, etc. Por eso reordenamos galleryItems
+  // según el índice original para que galleryItems[i] corresponda a la foto i.
+  const galleryItemsUnsorted = Array.from(galleryImages).map((tile) => ({
+    index: Number(tile.dataset.galleryIndex),
+    image: tile.querySelector('img')?.src || '',
+    alt: tile.querySelector('img')?.alt || '',
+    title: tile.querySelector('span')?.textContent?.trim() || '',
+  }));
+  galleryItemsUnsorted.sort((a, b) => a.index - b.index);
+  const galleryItems = galleryItemsUnsorted.map(({ image, alt, title }) => ({ image, alt, title }));
+  let currentGalleryIndex = 0;
+
+  function showGalleryImage(index: number) {
+    currentGalleryIndex = (index + galleryItems.length) % galleryItems.length;
+    const item = galleryItems[currentGalleryIndex];
+    if (!item || !galleryModalImage) return;
+
+    galleryModalImage.src = item.image;
+    galleryModalImage.alt = item.alt;
+    if (galleryModalTitle) galleryModalTitle.textContent = item.title;
+    if (galleryModalCounter) galleryModalCounter.textContent = `${currentGalleryIndex + 1} / ${galleryItems.length}`;
+  }
+
+  function closeGallery() {
+    galleryModal?.classList.add('hidden');
+    galleryModal?.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  galleryImages.forEach((tile) => {
+    tile.addEventListener('click', () => {
+      showGalleryImage(Number(tile.dataset.galleryIndex));
+      galleryModal?.classList.remove('hidden');
+      galleryModal?.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+      galleryClose?.focus();
+    });
+  });
+
+  galleryClose?.addEventListener('click', closeGallery);
+  galleryPrevious?.addEventListener('click', () => showGalleryImage(currentGalleryIndex - 1));
+  galleryNext?.addEventListener('click', () => showGalleryImage(currentGalleryIndex + 1));
+  galleryModal?.addEventListener('click', (event) => {
+    if (event.target === galleryModal) closeGallery();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (galleryModal?.classList.contains('hidden')) return;
+    if (event.key === 'Escape') closeGallery();
+    if (event.key === 'ArrowLeft') showGalleryImage(currentGalleryIndex - 1);
+    if (event.key === 'ArrowRight') showGalleryImage(currentGalleryIndex + 1);
+  });
+</script>

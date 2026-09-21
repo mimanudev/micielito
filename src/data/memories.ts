@@ -3,6 +3,7 @@ export interface Memory {
   filename: string;
   title: string;
   description: string;
+  date?: string;
   featured?: boolean;
 }
 

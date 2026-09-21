@@ -10,6 +10,7 @@
     if (!canvas) return;
     const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
@@ -67,7 +68,7 @@
       });
     }
 
-    let isRunning = true;
+    let isRunning = !reduceMotion;
     document.addEventListener('visibilitychange', () => {
       isRunning = !document.hidden;
       if (isRunning) requestAnimationFrame(animate);
@@ -126,7 +127,11 @@
       requestAnimationFrame(animate);
     }
 
-    animate();
+    if (reduceMotion) {
+      particles.forEach(drawPetal);
+    } else {
+      animate();
+    }
   }
 
   if (document.readyState === 'loading') {

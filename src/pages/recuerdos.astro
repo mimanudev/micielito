@@ -1,0 +1,166 @@
+---
+import '../styles/global.css';
+import { memories } from '../data/memories';
+import PetalsCanvas from '../components/PetalsCanvas.astro';
+import Modal from '../components/Modal.astro';
+import SpotifyModal from '../components/SpotifyModal.astro';
+import YoutubeModal from '../components/YoutubeModal.astro';
+import DosOruguitasSection from '../components/DosOruguitasSection.astro';
+import HiloRojoSection from '../components/HiloRojoSection.astro';
+import Menuin from '../components/menuin.astro';
+import SupabaseGallery from '../components/SupabaseGallery.astro';
+
+const rawBase = import.meta.env.BASE_URL || '/';
+const baseUrl = rawBase.endsWith('/') ? rawBase.slice(0, -1) : rawBase;
+const formattedMemories = memories.map((memory) => ({ ...memory, fullUrl: `${baseUrl}/images/${memory.filename}` }));
+const featuredMemory = formattedMemories.find((memory) => memory.featured) || formattedMemories[0];
+---
+
+<!doctype html>
+<html lang="es" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href={`${baseUrl}/favicon.svg`} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cada Recuerdo Florece Contigo | Mi Cielito</title>
+    <meta name="description" content="Recuerdos, capítulos y fotografías de nuestra historia juntos." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-[#0c0915] text-slate-100 min-h-screen relative overflow-x-hidden selection:bg-amber-400 selection:text-black">
+    <PetalsCanvas />
+    <div class="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-900/15 rounded-full blur-[100px] pointer-events-none"></div>
+
+    <header class="fixed top-0 left-0 right-0 z-40 px-3 sm:px-6 py-2.5 bg-[#0c0915]/85 backdrop-blur-md border-b border-amber-400/15">
+      <div class="max-w-6xl mx-auto flex items-center justify-between">
+        <a href={`${baseUrl}/`} class="flex items-center gap-2 text-amber-100 font-medium tracking-wide text-sm sm:text-base">
+          <span>🌻</span><span>Nuestra Historia</span>
+        </a>
+        <nav class="flex items-center gap-1.5 sm:gap-3 overflow-x-auto no-scrollbar py-1" aria-label="Capítulos">
+          <a href={`${baseUrl}/`} class="px-3 py-1 rounded-full bg-amber-500/15 text-amber-200 text-xs border border-amber-400/30 whitespace-nowrap">🏠 Inicio</a>
+          <a href="#oruguitasSection" class="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-200 text-xs border border-emerald-400/30 whitespace-nowrap">🐛 Oruguitas</a>
+          <a href="#hiloRojoSection" class="px-3 py-1 rounded-full bg-rose-500/15 text-rose-200 text-xs border border-rose-400/30 whitespace-nowrap">🧵 Hilo Rojo</a>
+          <a href="#memoriesSection" class="px-3 py-1 rounded-full bg-amber-500/15 text-amber-200 text-xs border border-amber-400/30 whitespace-nowrap">📸 Recuerdos</a>
+          <a href="#photoGallerySection" class="px-3 py-1 rounded-full bg-rose-500/15 text-rose-200 text-xs border border-rose-400/30 whitespace-nowrap">🖼️ Álbum</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="fixed bottom-5 right-5 z-40 flex flex-col gap-2.5 items-end">
+      <button id="floatingSpotifyBtn" class="px-4 py-2.5 rounded-full bg-[#120d24]/90 border border-emerald-500/50 text-emerald-300 text-xs font-medium flex items-center gap-2 backdrop-blur-md shadow-[0_0_20px_rgba(29,185,84,0.35)] hover:scale-105 transition-all cursor-pointer" title="Escuchar Playlist en Spotify">
+        <img src={`${baseUrl}/Spotify_App_Logo.svg`} alt="logo Spotify" class="h-5 w-5" />
+        <span class="font-semibold">Nuestra Playlist</span>
+      </button>
+      <a href={`${baseUrl}/`} class="px-3.5 py-2 rounded-full bg-amber-500/20 text-amber-200 text-xs border border-amber-400/40 backdrop-blur-md">↑ Inicio</a>
+    </div>
+
+    <main class="relative z-10 flex flex-col items-center min-h-screen px-4 pt-24 pb-12">
+      <section class="w-full max-w-2xl text-center mb-8">
+        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs uppercase tracking-widest font-semibold">🌻 Nuestra historia 🌻</span>
+        <h1 class="font-serif text-3xl md:text-5xl text-amber-100 mt-5 mb-3">Cada Recuerdo Florece Contigo</h1>
+        <p class="font-romantic text-lg md:text-2xl text-amber-100/80 italic leading-relaxed">Un lugar para volver a nuestros momentos, celebrar lo que somos y seguir construyendo historias hermosas.</p>
+      </section>
+
+      <DosOruguitasSection />
+      <HiloRojoSection />
+
+      <section id="memoriesSection" class="w-full max-w-6xl mt-12 chapter-section" style="content-visibility: auto; contain-intrinsic-size: 1000px;">
+        <div class="flex items-center justify-between border-b border-amber-400/20 pb-4 mb-8">
+          <div>
+            <h2 class="font-serif text-2xl md:text-3xl text-amber-100">Galería de Recuerdos</h2>
+            <p class="text-xs md:text-sm text-amber-200/60 mt-1">Colección de nuestros momentos juntos ({formattedMemories.length})</p>
+          </div>
+          <span class="hidden sm:inline text-xs text-amber-300/70 bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-400/20">Haz clic en una foto 🔍</span>
+        </div>
+
+        <div id="memoriesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {formattedMemories.map((memory) => (
+            <button type="button" class="memory-card group relative bg-[#151028]/80 hover:bg-[#1c1536] border border-amber-400/20 hover:border-amber-400/60 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:-translate-y-2 cursor-pointer text-left" data-memory-id={memory.id}>
+              <div class="relative w-full aspect-[4/3] overflow-hidden bg-black/50">
+                <img src={memory.fullUrl} alt={memory.title} width="640" height="480" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" decoding="async" />
+              </div>
+              <div class="p-4"><h3 class="font-serif text-lg text-amber-100 font-medium mb-1">{memory.title}</h3><p class="text-xs text-amber-100/70 line-clamp-2 leading-relaxed">{memory.description}</p></div>
+            </button>
+          ))}
+        </div>
+        <div class="mt-16 flex justify-center"><Menuin /></div>
+      </section>
+
+      <SupabaseGallery />
+    </main>
+
+    <Modal />
+    <SpotifyModal />
+    <YoutubeModal />
+
+    <script>
+      const loadEnhancements = async () => {
+        const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([import('gsap'), import('gsap/ScrollTrigger')]);
+        gsap.registerPlugin(ScrollTrigger);
+
+        const evolveButton = document.getElementById('evolveBtn');
+        const evolveText = document.getElementById('evolveBtnText');
+        let evolved = false;
+        const evolve = () => {
+          if (evolved) return;
+          evolved = true;
+          gsap.timeline().to('#oruguita1', { x: 25, duration: 0.6 }).to('#oruguita2', { x: -25, duration: 0.6 }, '-=0.6').to('#caterpillarHeart', { scale: 1.4, duration: 0.4, yoyo: true, repeat: 1 }).to('#caterpillarsStage', { opacity: 0, scale: 0.8, duration: 0.5 }).set('#cocoonStage', { opacity: 1, pointerEvents: 'auto' }).to('#cocoonStage div', { scale: 1.15, duration: 0.7 }).to('#cocoonStage', { opacity: 0, duration: 0.4 }).set('#butterfliesStage', { opacity: 1, pointerEvents: 'auto' }).fromTo('#butterfliesStage', { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.8 }).call(() => {
+            if (evolveText) evolveText.textContent = '¡Mariposas Libres!';
+
+            gsap.to('.wing-left', {
+              transformOrigin: 'right center',
+              scaleX: 0.3,
+              duration: 0.18,
+              repeat: -1,
+              yoyo: true,
+              ease: 'sine.inOut',
+            });
+            gsap.to('.wing-right', {
+              transformOrigin: 'left center',
+              scaleX: 0.3,
+              duration: 0.18,
+              repeat: -1,
+              yoyo: true,
+              ease: 'sine.inOut',
+            });
+            gsap.to('#butterfly1', { y: -12, duration: 2, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+            gsap.to('#butterfly2', { y: 12, duration: 2.3, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+          });
+        };
+        evolveButton?.addEventListener('click', evolve);
+        ScrollTrigger.create({ trigger: '#oruguitasSection', start: 'top 70%', onEnter: evolve });
+
+        const threadButton = document.getElementById('pullThreadBtn');
+        let threadPulled = false;
+        threadButton?.addEventListener('click', () => { threadPulled = !threadPulled; const text = document.getElementById('pullThreadBtnText'); if (text) text.textContent = threadPulled ? '¡Siempre Conectados!' : 'Tirar del Hilo'; gsap.to('#hiloAnchorLeft', { x: threadPulled ? 55 : 0, duration: 0.8 }); gsap.to('#hiloAnchorRight', { x: threadPulled ? -55 : 0, duration: 0.8 }); gsap.to('#hiloHeartKnot', { scale: threadPulled ? 1.5 : 1, duration: 0.4 }); });
+
+        const spotifyModal = document.getElementById('spotifyModal');
+        const spotifyBox = document.getElementById('spotifyModalBox');
+        const spotifyFrame = document.getElementById('spotifyIframe') as HTMLIFrameElement | null;
+        const openSpotify = () => { spotifyModal?.classList.remove('hidden'); spotifyModal?.classList.add('flex'); document.body.style.overflow = 'hidden'; if (spotifyFrame && !spotifyFrame.src) spotifyFrame.src = spotifyFrame.dataset.src || ''; gsap.fromTo(spotifyBox, { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3 }); };
+        const closeSpotify = () => { spotifyModal?.classList.add('hidden'); spotifyModal?.classList.remove('flex'); document.body.style.overflow = ''; if (spotifyFrame) spotifyFrame.removeAttribute('src'); };
+        document.getElementById('floatingSpotifyBtn')?.addEventListener('click', openSpotify);
+        document.getElementById('spotifyCloseBtn')?.addEventListener('click', closeSpotify);
+
+        const cards = document.querySelectorAll<HTMLElement>('.memory-card');
+        const modal = document.getElementById('photoModal');
+        const modalBox = document.getElementById('modalBox');
+        const modalImage = document.getElementById('modalImage') as HTMLImageElement | null;
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDescription = document.getElementById('modalDescription');
+        const modalCounter = document.getElementById('modalCounter');
+        const memoriesData = Array.from(cards).map((card) => ({ id: Number(card.dataset.memoryId), image: card.querySelector('img')?.src || '', title: card.querySelector('h3')?.textContent || '', description: card.querySelector('p')?.textContent || '' }));
+        let current = 0;
+        const showMemory = (index: number) => { current = (index + memoriesData.length) % memoriesData.length; const item = memoriesData[current]; if (!item) return; if (modalImage) { modalImage.src = item.image; modalImage.alt = item.title; } if (modalTitle) modalTitle.textContent = item.title; if (modalDescription) modalDescription.textContent = item.description; if (modalCounter) modalCounter.textContent = `${current + 1} / ${memoriesData.length}`; };
+        const openMemory = (id: number) => { showMemory(memoriesData.findIndex((item) => item.id === id)); modal?.classList.remove('hidden'); modal?.classList.add('flex'); document.body.style.overflow = 'hidden'; gsap.fromTo(modalBox, { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3 }); };
+        cards.forEach((card) => card.addEventListener('click', () => openMemory(Number(card.dataset.memoryId))));
+        document.getElementById('modalCloseBtn')?.addEventListener('click', () => { modal?.classList.add('hidden'); modal?.classList.remove('flex'); document.body.style.overflow = ''; });
+        document.getElementById('modalPrevBtn')?.addEventListener('click', () => showMemory(current - 1));
+        document.getElementById('modalNextBtn')?.addEventListener('click', () => showMemory(current + 1));
+        document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeSpotify(); modal?.classList.add('hidden'); modal?.classList.remove('flex'); document.body.style.overflow = ''; } if (event.key === 'ArrowLeft') showMemory(current - 1); if (event.key === 'ArrowRight') showMemory(current + 1); });
+      };
+      void loadEnhancements();
+    </script>
+  </body>
+</html>
