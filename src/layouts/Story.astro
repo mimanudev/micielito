@@ -1,0 +1,209 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Nuestra historia, contada con el scroll.' } = Astro.props;
+const rawBase = import.meta.env.BASE_URL || '/';
+const baseUrl = rawBase.endsWith('/') ? rawBase.slice(0, -1) : rawBase;
+---
+
+<!doctype html>
+<html lang="es" data-theme="noche">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0c0915" />
+    <link rel="icon" type="image/svg+xml" href={`${baseUrl}/favicon.svg`} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="story">
+    <div class="chrome" data-chrome data-theme="noche">
+      <div class="backdrop" aria-hidden="true"></div>
+      <a class="brand" href={`${baseUrl}/`}>Mi Cielito</a>
+      <p class="year" aria-hidden="true"><span data-year-display>2022</span></p>
+    </div>
+    <slot />
+  </body>
+</html>
+
+<script>
+  import '../scripts/scroll';
+</script>
+
+<style is:global>
+  :root {
+    /* Materiales de nuestra historia */
+    --noche: #0c0915;
+    --luz: #f3ead8;
+    --lavanda: #9a8fae;
+    --papel: #f1e9db;
+    --tinta: #2a1e14;
+    --girasol: #f2b632;
+    --vino: #3a0d14;
+    --cielo: #1b2a4a;
+
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-mono: 'DM Mono', ui-monospace, monospace;
+
+    --t-small: 0.8125rem;
+    --t-body: clamp(1.0625rem, 0.95rem + 0.4vw, 1.3125rem);
+    --t-lead: clamp(1.6rem, 1.1rem + 2vw, 3rem);
+    --t-display: clamp(2.8rem, 1.2rem + 6vw, 7.5rem);
+    --t-giant: clamp(4rem, 0.8rem + 13vw, 14rem);
+
+    --gutter: clamp(1rem, 4vw, 4rem);
+    --chrome: 0px;
+    --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+    --bg: var(--noche);
+    --fg: var(--luz);
+    --fg-dim: var(--lavanda);
+  }
+
+  /* Paletas por escena: el fondo de la página transiciona entre ellas */
+  [data-theme='noche'] { --bg: var(--noche); --fg: var(--luz); --fg-dim: var(--lavanda); }
+  [data-theme='papel'] { --bg: var(--papel); --fg: var(--tinta); --fg-dim: #7a6a58; }
+  [data-theme='girasol'] { --bg: var(--girasol); --fg: #1a1206; --fg-dim: #5c4100; }
+  [data-theme='vino'] { --bg: var(--vino); --fg: #f6dcd8; --fg-dim: #c48a8a; }
+  [data-theme='cielo'] { --bg: var(--cielo); --fg: #eef2fb; --fg-dim: #a9badf; }
+
+  body.story {
+    margin: 0;
+    background-color: var(--noche);
+    color: var(--luz);
+    font-family: var(--font-display);
+    font-size: var(--t-body);
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .story h1, .story h2, .story h3, .story p, .story figure, .story blockquote { margin: 0; }
+
+  .mono {
+    font-family: var(--font-mono);
+    font-size: var(--t-small);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--bg);
+    transition: background-color 900ms ease;
+    pointer-events: none;
+    contain: strict;
+  }
+
+  /* Escena: contenedor alto (--len en alturas de viewport) con un escenario sticky */
+  .scene {
+    position: relative;
+    height: calc(var(--len, 300) * 1vh);
+    color: var(--fg);
+    contain: layout style;
+  }
+
+  .js .scene:not(.is-warm) { content-visibility: auto; }
+
+  @supports (height: 1svh) {
+    :root { --chrome: calc(100lvh - 100svh); }
+  }
+
+  .stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100lvh;
+    overflow: hidden;
+    contain: content;
+  }
+
+  .js .scene { --p: 0; }
+
+  /* Textos que se encienden en su momento, apilados en la misma celda */
+  .js .stack { display: grid; }
+  .js .stack > * { grid-area: 1 / 1; }
+
+  .js .beat {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(0.6rem);
+    transition: opacity 0.5s ease, transform 0.5s ease, visibility 0s linear 0.5s;
+  }
+  .js .beat.is-on {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 0.8s ease 0.1s, transform 0.8s var(--ease-out) 0.1s, visibility 0s;
+  }
+
+  @property --layer-o {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 1;
+  }
+
+  /* Capas a pantalla completa que aparecen en --a y desaparecen en --b; --fade es lo que dura el fundido */
+  .layer {
+    --layer-o: calc(
+      clamp(0, calc((var(--p, 1) - var(--a, -1)) / var(--fade, 0.025)), 1) *
+        (1 - clamp(0, calc((var(--p, 1) - var(--b, 2)) / var(--fade, 0.025)), 1))
+    );
+    position: absolute;
+    inset: 0;
+    opacity: var(--layer-o);
+  }
+
+  .still, .stack, .beat { --p: 0; }
+
+  /* Sin JavaScript, la historia se lee de arriba abajo */
+  html:not(.js) .scene { height: auto; background-color: var(--bg); }
+  html:not(.js) .stage { position: relative; height: auto; min-height: 100vh; padding-block: 10vh; }
+
+  .brand, .year {
+    position: fixed;
+    z-index: 50;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg);
+  }
+
+  .brand {
+    top: clamp(0.75rem, 3vh, 2rem);
+    left: var(--gutter);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s, color 900ms ease;
+  }
+  .brand:hover { opacity: 1; }
+
+  .year {
+    left: var(--gutter);
+    bottom: clamp(0.75rem, 3vh, 2rem);
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.75;
+    pointer-events: none;
+    transition: color 900ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .backdrop { transition: none; }
+    .js .beat, .js .beat.is-on { transform: none; }
+  }
+</style>

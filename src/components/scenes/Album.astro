@@ -1,0 +1,398 @@
+---
+import { album } from '../../data/album';
+
+const rawBase = import.meta.env.BASE_URL || '/';
+const baseUrl = rawBase.endsWith('/') ? rawBase.slice(0, -1) : rawBase;
+const src = (file: string) => encodeURI(`${baseUrl}/images/${file}`);
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<!-- Sin la clase .scene: el álbum tiene altura natural, pero sigue cambiando el tema y el año -->
+<section id="album" class="album" data-scene="album" data-theme="papel" data-year="2026" data-album aria-labelledby="album-title">
+  <header class="album-head">
+    <p class="mono">Álbum · {album.length} fotos</p>
+    <h2 id="album-title">Un álbum <em>para volver</em></h2>
+    <p class="lead">Cada foto tiene una forma distinta de decir: qué bonito coincidir contigo.</p>
+  </header>
+
+  <ul class="mosaic">
+    {
+      album.map((photo, i) => (
+        <li class="tile" style={`--d: ${(i % 3) * 90}ms`}>
+          <button type="button" data-index={i} data-title={photo.title} aria-label={`Abrir foto: ${photo.title}`}>
+            <span class="frame">
+              <img src={src(photo.file)} alt={photo.alt} width={photo.width} height={photo.height} loading="lazy" decoding="async" />
+            </span>
+            <span class="mono caption"><span>{pad(i + 1)}</span>{photo.title}</span>
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<dialog class="viewer" data-viewer aria-label="Foto del álbum">
+  <div class="viewer-bar">
+    <p class="mono" data-counter></p>
+    <button type="button" class="mono" data-close>Cerrar <span aria-hidden="true">✕</span></button>
+  </div>
+  <figure class="viewer-photo" data-stage>
+    <img data-big alt="" />
+  </figure>
+  <div class="viewer-bar">
+    <button type="button" class="mono" data-prev><span aria-hidden="true">←</span> Anterior</button>
+    <p class="viewer-title" data-title aria-live="polite"></p>
+    <button type="button" class="mono" data-next>Siguiente <span aria-hidden="true">→</span></button>
+  </div>
+</dialog>
+
+<script>
+  import { $, $$ } from '../../scripts/dom';
+
+  const root = $('[data-album]')!;
+  const viewer = $<HTMLDialogElement>('[data-viewer]')!;
+  const big = $<HTMLImageElement>('[data-big]', viewer)!;
+  const titleEl = $('[data-title]', viewer)!;
+  const counterEl = $('[data-counter]', viewer)!;
+  const tiles = $$<HTMLButtonElement>('[data-index]', root);
+  const thumbs = tiles.map((tile) => $<HTMLImageElement>('img', tile)!);
+  const n = tiles.length;
+  const pad = (v: number) => String(v).padStart(2, '0');
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canMorph = 'startViewTransition' in document && !reduced;
+  const NAME = 'album-photo';
+  let current = 0;
+  let busy = false;
+
+  // Las fotos aparecen al entrar en pantalla, con un pequeño escalonado por columna
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        entry.target.classList.add('is-in');
+        io.unobserve(entry.target);
+      }
+    },
+    { rootMargin: '0px 0px -8% 0px' },
+  );
+  for (const tile of $$('.tile', root)) io.observe(tile);
+
+  function fill(i: number) {
+    current = (i + n) % n;
+    const thumb = thumbs[current];
+    big.src = thumb.currentSrc || thumb.src;
+    big.alt = thumb.alt;
+    big.width = Number(thumb.getAttribute('width'));
+    big.height = Number(thumb.getAttribute('height'));
+    titleEl.textContent = tiles[current].dataset.title ?? '';
+    counterEl.textContent = `${pad(current + 1)} / ${pad(n)}`;
+  }
+
+  const ready = (img: HTMLImageElement) => img.decode().catch(() => {});
+
+  const lock = (on: boolean) => {
+    document.documentElement.style.overflow = on ? 'hidden' : '';
+  };
+
+  // Ejecuta un cambio del DOM dentro de una View Transition (o sin ella si el navegador no la soporta)
+  async function transition(update: () => void, nav?: 'next' | 'prev') {
+    if (!canMorph) return update();
+    const html = document.documentElement;
+    if (nav) html.dataset.albumNav = nav;
+    try {
+      await document.startViewTransition(update).finished;
+    } finally {
+      delete html.dataset.albumNav;
+    }
+  }
+
+  async function open(i: number) {
+    if (busy || viewer.open) return;
+    busy = true;
+    const thumb = thumbs[i];
+    fill(i);
+    await ready(big);
+    // La miniatura y la foto grande comparten nombre: el navegador anima una hacia la otra
+    thumb.style.viewTransitionName = NAME;
+    await transition(() => {
+      thumb.style.viewTransitionName = '';
+      big.style.viewTransitionName = NAME;
+      viewer.showModal();
+      lock(true);
+    });
+    busy = false;
+  }
+
+  async function close() {
+    if (busy || !viewer.open) return;
+    busy = true;
+    const thumb = thumbs[current];
+    // Si navegaste a una foto que quedó fuera de pantalla, la página se coloca detrás del visor antes de volver
+    const r = thumb.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > window.innerHeight) thumb.scrollIntoView({ block: 'center', behavior: 'instant' });
+    await transition(() => {
+      big.style.viewTransitionName = '';
+      viewer.close();
+      lock(false);
+      thumb.style.viewTransitionName = NAME;
+    });
+    thumb.style.viewTransitionName = '';
+    tiles[current].focus({ preventScroll: true });
+    busy = false;
+  }
+
+  async function go(step: number) {
+    if (busy || !viewer.open) return;
+    busy = true;
+    const next = new Image();
+    next.src = thumbs[(current + step + n) % n].currentSrc || thumbs[(current + step + n) % n].src;
+    await ready(next);
+    await transition(() => fill(current + step), step > 0 ? 'next' : 'prev');
+    busy = false;
+  }
+
+  tiles.forEach((tile, i) => tile.addEventListener('click', () => open(i)));
+  $('[data-close]', viewer)!.addEventListener('click', close);
+  $('[data-prev]', viewer)!.addEventListener('click', () => go(-1));
+  $('[data-next]', viewer)!.addEventListener('click', () => go(1));
+
+  // Clic fuera de la foto cierra; Escape cierra con la misma transición
+  $('[data-stage]', viewer)!.addEventListener('click', (e) => {
+    if (e.target !== big) close();
+  });
+  viewer.addEventListener('cancel', (e) => {
+    e.preventDefault();
+    close();
+  });
+  viewer.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') go(-1);
+    if (e.key === 'ArrowRight') go(1);
+  });
+
+  // Deslizar en móvil
+  let touchX = 0;
+  viewer.addEventListener('touchstart', (e) => (touchX = e.touches[0].clientX), { passive: true });
+  viewer.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+  });
+</script>
+
+<style>
+  .album {
+    position: relative;
+    padding: clamp(6rem, 16vh, 10rem) var(--gutter) clamp(6rem, 14vh, 9rem);
+    color: var(--fg);
+  }
+
+  .album-head {
+    max-width: 60rem;
+    margin-bottom: clamp(3rem, 8vh, 5rem);
+  }
+
+  .album-head .mono { color: var(--fg-dim); }
+
+  h2 {
+    margin-top: 1rem;
+    font-size: var(--t-display);
+    font-weight: 300;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+  }
+
+  h2 em { font-style: italic; }
+
+  .lead {
+    margin-top: 1.5rem;
+    max-width: 36ch;
+    font-size: var(--t-lead);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.15;
+    color: var(--fg-dim);
+  }
+
+  /* Columnas tipo mosaico: cada foto conserva su proporción */
+  .mosaic {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    columns: 3 18rem;
+    column-gap: clamp(1rem, 2.5vw, 2.25rem);
+  }
+
+  .tile {
+    break-inside: avoid;
+    margin-bottom: clamp(1.5rem, 3vw, 2.75rem);
+  }
+
+  .js .tile {
+    opacity: 0;
+    transform: translateY(2.5rem);
+    transition: opacity 0.9s ease var(--d), transform 1.1s var(--ease-out) var(--d);
+  }
+  .js .tile.is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  .tile button {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    text-align: left;
+    cursor: zoom-in;
+  }
+
+  .frame {
+    display: block;
+    overflow: hidden;
+    box-shadow: 0 1.25rem 2.5rem rgb(42 30 20 / 0.18);
+  }
+
+  .frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 0.9s var(--ease-out), filter 0.9s ease;
+  }
+
+  .tile button:hover img,
+  .tile button:focus-visible img {
+    transform: scale(1.04);
+    filter: saturate(1.1);
+  }
+
+  .tile button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 6px;
+  }
+
+  .caption {
+    display: flex;
+    gap: 0.9rem;
+    margin-top: 0.85rem;
+    color: var(--fg-dim);
+  }
+
+  .caption span { color: var(--fg); }
+
+  /* Visor a pantalla completa */
+  .viewer {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: clamp(0.75rem, 2.5vh, 1.75rem) var(--gutter);
+    border: 0;
+    background: rgb(12 9 21 / 0.97);
+    color: var(--luz);
+    font-family: var(--font-display);
+  }
+
+  .viewer[open] {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: clamp(0.75rem, 2vh, 1.5rem);
+  }
+
+  .viewer::backdrop { background: transparent; }
+
+  .viewer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .viewer-bar .mono { color: var(--lavanda); }
+
+  .viewer button {
+    padding: 0.5rem 0;
+    border: 0;
+    background: none;
+    color: var(--luz);
+    cursor: pointer;
+    opacity: 0.75;
+    transition: opacity 0.2s;
+  }
+
+  .viewer button:hover { opacity: 1; }
+
+  .viewer-photo {
+    display: grid;
+    place-items: center;
+    min-height: 0;
+    margin: 0;
+    cursor: zoom-out;
+  }
+
+  .viewer-photo img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    cursor: default;
+    box-shadow: 0 2rem 5rem rgb(0 0 0 / 0.5);
+  }
+
+  .viewer-title {
+    flex: 1;
+    text-align: center;
+    font-size: var(--t-lead);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.1;
+  }
+
+  @media (max-width: 640px) {
+    .viewer-title { font-size: 1.35rem; }
+  }
+
+  /* Sin View Transitions: un fundido sencillo */
+  @supports not (view-transition-name: none) {
+    .viewer[open] { animation: viewer-in 0.35s ease; }
+  }
+
+  @keyframes viewer-in {
+    from { opacity: 0; }
+  }
+</style>
+
+<style is:global>
+  /* La foto viaja de la miniatura al visor (y de vuelta) */
+  ::view-transition-group(album-photo) {
+    animation-duration: 0.65s;
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.45s;
+  }
+
+  /* Al pasar de foto: la anterior sale hacia un lado y la nueva entra por el otro */
+  html[data-album-nav] ::view-transition-old(album-photo) {
+    animation: album-out 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  html[data-album-nav] ::view-transition-new(album-photo) {
+    animation: album-in 0.65s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  html[data-album-nav='prev'] ::view-transition-old(album-photo),
+  html[data-album-nav='prev'] ::view-transition-new(album-photo) {
+    --dir: -1;
+  }
+
+  @keyframes album-out {
+    to { opacity: 0; transform: translateX(calc(var(--dir, 1) * -6%)); }
+  }
+  @keyframes album-in {
+    from { opacity: 0; transform: translateX(calc(var(--dir, 1) * 6%)); }
+  }
+</style>

@@ -1,0 +1,133 @@
+---
+const rawBase = import.meta.env.BASE_URL || '/';
+const baseUrl = rawBase.endsWith('/') ? rawBase.slice(0, -1) : rawBase;
+---
+
+<section class="scene inicio" data-scene="inicio" data-theme="noche" data-year="2022" data-p-range="0 0.6" style="--len: 320">
+  <div class="stage">
+    <div class="photo">
+      <img
+        src={`${baseUrl}/images/new_compress/IMG_0402.webp`}
+        alt="Nosotros juntos"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </div>
+
+    <header class="hero">
+      <p class="mono still">Desde el 8 de marzo de 2022</p>
+      <h1 class="still"><span>Mi</span> <span>Cielito</span></h1>
+    </header>
+
+    <blockquote class="quote stack">
+      <p class="beat" data-beat="0.32 0.62">Nuestra historia de amor,</p>
+      <p class="beat" data-beat="0.62"><em>gracias por existir.</em></p>
+    </blockquote>
+
+    <div class="hint" aria-hidden="true"><span></span></div>
+  </div>
+</section>
+
+<style>
+  /* La foto se aleja y se apaga mientras aparece la frase */
+  .photo {
+    --fade: clamp(0, (var(--p, 1) - 0.04) / 0.3, 1);
+    position: absolute;
+    inset: 0;
+    opacity: calc(1 - 0.85 * var(--fade));
+  }
+
+  .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 40%;
+    filter: saturate(calc(1 - 0.7 * var(--fade)));
+    transform: scale(calc(1.02 + 0.12 * var(--fade)));
+  }
+
+  .photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgb(12 9 21 / 0.92), rgb(12 9 21 / 0.35) 45%, rgb(12 9 21 / 0.1) 70%);
+  }
+
+  .hero {
+    --out: clamp(0, (var(--p, 0) - 0.04) / 0.14, 1);
+    position: absolute;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: calc(clamp(3rem, 9vh, 6rem) + var(--chrome));
+    opacity: calc(1 - var(--out));
+    transform: translateY(calc(var(--out) * -5vh));
+  }
+
+  .hero .mono {
+    margin-bottom: 1.25rem;
+    opacity: 0.85;
+  }
+
+  .hero h1 {
+    font-size: var(--t-giant);
+    font-weight: 300;
+    line-height: 0.82;
+    letter-spacing: -0.035em;
+  }
+
+  .hero h1 span { display: block; }
+  .hero h1 span + span {
+    padding-left: 0.5em;
+    font-style: italic;
+  }
+
+  .quote {
+    position: absolute;
+    inset: 0;
+    place-items: center;
+    padding-inline: var(--gutter);
+    font-size: var(--t-display);
+    font-weight: 300;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  .quote p { max-width: 14ch; }
+
+  .hint {
+    position: absolute;
+    right: var(--gutter);
+    bottom: calc(clamp(3rem, 9vh, 6rem) + var(--chrome));
+    width: 1px;
+    height: 4.5rem;
+    background: rgb(255 255 255 / 0.2);
+    overflow: hidden;
+    opacity: calc(1 - clamp(0, var(--p, 0) / 0.04, 1));
+  }
+
+  .hint span {
+    display: block;
+    height: 40%;
+    background: var(--fg);
+    animation: drop 2.2s var(--ease-out) infinite;
+  }
+
+  @keyframes drop {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(260%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hint span { animation: none; }
+  }
+
+  html:not(.js) .hero,
+  html:not(.js) .quote {
+    position: relative;
+    inset: auto;
+    margin-block: 10vh;
+  }
+</style>
